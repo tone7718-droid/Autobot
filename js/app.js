@@ -31,6 +31,53 @@ function esc(s) {
   }[m]));
 }
 
+const SITE_TITLE = "내 통증 사용설명서";
+const DEFAULT_DESC =
+  "거북목부터 족저근막염까지, 가장 흔한 근골격계 질환 30가지. 증상 체크·자가 평가·수동 치료·운동 처방까지 스스로 통증의 원인을 찾고 해결하세요.";
+
+/* 페이지별 제목 / 공유 메타 갱신 (탭 제목 + JS 실행 크롤러 대응) */
+function setMeta(title, desc) {
+  const fullTitle = title ? `${title} — ${SITE_TITLE}` : `${SITE_TITLE} — 근골격계 질환 30 가이드`;
+  document.title = fullTitle;
+  const d = desc || DEFAULT_DESC;
+  const map = {
+    'meta[name="description"]': d,
+    'meta[property="og:title"]': fullTitle,
+    'meta[property="og:description"]': d,
+    'meta[name="twitter:title"]': fullTitle,
+    'meta[name="twitter:description"]': d,
+  };
+  for (const sel in map) {
+    const el = document.querySelector(sel);
+    if (el) el.setAttribute("content", map[sel]);
+  }
+  // og:url 갱신 + 상대 og:image를 절대경로로 보정
+  setMetaUrl();
+}
+
+function setMetaUrl() {
+  ensureMeta('meta[property="og:url"]', "property", "og:url").setAttribute("content", location.href);
+  const origin = location.origin && location.origin !== "null" ? location.origin : "";
+  if (origin) {
+    document.querySelectorAll('meta[property="og:image"], meta[name="twitter:image"]').forEach((el) => {
+      const v = el.getAttribute("content");
+      if (v && !/^https?:\/\//.test(v)) {
+        el.setAttribute("content", origin + "/" + v.replace(/^\//, ""));
+      }
+    });
+  }
+}
+
+function ensureMeta(selector, attr, val) {
+  let el = document.querySelector(selector);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, val);
+    document.head.appendChild(el);
+  }
+  return el;
+}
+
 /* ---------- 페이지: 홈 ---------- */
 function renderHome() {
   const catCards = CATEGORIES.map((cat) => {
@@ -135,7 +182,10 @@ function renderCondition(id) {
   const descHTML = c.description.map((p) => `<p class="lead">${p}</p>`).join("");
 
   const causesHTML = c.causes.map((s) => `<li>${s}</li>`).join("");
-  const symptomsHTML = c.symptoms.map((s) => `<li>${s}</li>`).join("");
+  const symptomsHTML = c.symptoms.map((s, i) => `
+    <li class="symptom-check" data-idx="${i}" role="button" tabindex="0" aria-pressed="false">
+      <span class="sc-box" aria-hidden="true"></span><span class="sc-text">${s}</span>
+    </li>`).join("");
 
   const testsHTML = c.selfTests.map((t) => `
     <div class="test-card">
@@ -189,8 +239,9 @@ function renderCondition(id) {
 
     <section class="content-section" id="sec-symptoms">
       <h2>✅ 이런 증상이 있나요?</h2>
-      <p class="lead">아래 항목 중 <strong>3개 이상</strong> 해당하면 이 질환일 가능성이 높습니다.</p>
-      <ul class="check-list">${symptomsHTML}</ul>
+      <p class="lead">해당하는 항목을 <strong>눌러서 체크</strong>해 보세요. <strong>3개 이상</strong>이면 이 질환일 가능성이 높습니다.</p>
+      <ul class="check-list symptom-checklist" data-total="${c.symptoms.length}">${symptomsHTML}</ul>
+      <div class="symptom-result" id="symptom-result" hidden></div>
     </section>
 
     <section class="content-section" id="sec-tests">
@@ -319,17 +370,75 @@ function route() {
 
   window.scrollTo(0, 0);
 
-  if (!page) return renderHome();
-  if (page === "all") return renderAll();
-  if (page === "guide") return renderGuide();
-  if (page === "category" && param) return renderCategory(param);
-  if (page === "condition" && param) return renderCondition(param);
-  if (page === "search") return renderSearch(param || "");
+  if (!page) { renderHome(); return setMeta(null, DEFAULT_DESC); }
+  if (page === "all") { renderAll(); return setMeta("전체 질환 30가지"); }
+  if (page === "guide") { renderGuide(); return setMeta("이용 안내"); }
+  if (page === "category" && param) {
+    renderCategory(param);
+    const cat = catOf(param);
+    return setMeta(cat ? `${cat.name} 질환` : null, cat ? cat.desc : null);
+  }
+  if (page === "condition" && param) {
+    renderCondition(param);
+    const c = CONDITIONS.find((x) => x.id === param);
+    return setMeta(c ? c.name : null, c ? c.summary : null);
+  }
+  if (page === "search") {
+    renderSearch(param || "");
+    return setMeta("검색");
+  }
   renderNotFound();
+  setMeta("페이지를 찾을 수 없습니다");
 }
 
 window.addEventListener("hashchange", route);
 window.addEventListener("DOMContentLoaded", route);
+
+/* ---------- 증상 체크리스트 인터랙션 (이벤트 위임) ---------- */
+function toggleSymptom(li) {
+  const checked = li.getAttribute("aria-pressed") === "true";
+  li.setAttribute("aria-pressed", checked ? "false" : "true");
+  li.classList.toggle("checked", !checked);
+  updateSymptomResult(li.closest(".symptom-checklist"));
+}
+
+function updateSymptomResult(listEl) {
+  if (!listEl) return;
+  const total = Number(listEl.dataset.total) || listEl.children.length;
+  const count = listEl.querySelectorAll('.symptom-check[aria-pressed="true"]').length;
+  const result = document.getElementById("symptom-result");
+  if (!result) return;
+
+  if (count === 0) {
+    result.hidden = true;
+    return;
+  }
+  result.hidden = false;
+
+  let level, msg;
+  if (count >= 3) {
+    level = "high";
+    msg = `체크한 증상이 <strong>${count}개</strong>입니다. 이 질환일 <strong>가능성이 높습니다.</strong> 아래의 자가 평가와 능동 치료(운동)를 살펴보고, "🚨 병원에 가야 할 때" 항목에 해당하지 않는지도 꼭 확인하세요.`;
+  } else {
+    level = "low";
+    msg = `체크한 증상이 <strong>${count}개</strong>입니다. 가능성을 단정하긴 이릅니다. 다른 항목도 천천히 살펴보고, 증상이 애매하면 다른 질환 페이지도 함께 확인해 보세요.`;
+  }
+  result.className = "symptom-result " + level;
+  result.innerHTML = `<span class="sr-count">${count} / ${total}</span> ${msg}`;
+}
+
+app.addEventListener("click", (e) => {
+  const li = e.target.closest(".symptom-check");
+  if (li && app.contains(li)) toggleSymptom(li);
+});
+app.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  const li = e.target.closest(".symptom-check");
+  if (li && app.contains(li)) {
+    e.preventDefault();
+    toggleSymptom(li);
+  }
+});
 
 /* ---------- 맨 위로 버튼 ---------- */
 const topBtn = document.createElement("button");
