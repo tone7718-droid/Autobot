@@ -128,6 +128,49 @@ const Store = {
 
 
 /* ---------- 페이지: 홈 ---------- */
+/* 통증 부위 그림(body map): 그림의 부위를 누르면 해당 카테고리로 이동 */
+function bodyMapHTML() {
+  // 각 부위 그룹은 data-cat 으로 카테고리와 연결된다.
+  const zone = (cat, label, shapes) => `
+    <g class="bm-zone" data-cat="${cat}" role="button" tabindex="0" aria-label="${label}">
+      <title>${label}</title>${shapes}
+    </g>`;
+
+  return `
+  <div class="bodymap" aria-label="아픈 부위를 그림에서 선택">
+    <svg viewBox="0 0 280 580" role="group" aria-label="인체 그림">
+      ${zone("neck", "목 (거북목·목 디스크·담 결림)", `
+        <circle cx="140" cy="48" r="32"/>
+        <rect x="126" y="78" width="28" height="20" rx="6"/>`)}
+      ${zone("shoulder", "어깨 (회전근개·오십견·충돌증후군)", `
+        <ellipse cx="98" cy="116" rx="28" ry="19"/>
+        <ellipse cx="182" cy="116" rx="28" ry="19"/>`)}
+      ${zone("back", "허리·골반 (디스크·협착증·요통)", `
+        <rect x="110" y="100" width="60" height="118" rx="16"/>`)}
+      ${zone("elbow-hand", "팔꿈치·손목·손 (테니스엘보·손목터널)", `
+        <rect x="64" y="112" width="20" height="74" rx="10"/>
+        <rect x="66" y="180" width="17" height="74" rx="9"/>
+        <circle cx="74" cy="266" r="13"/>
+        <rect x="196" y="112" width="20" height="74" rx="10"/>
+        <rect x="197" y="180" width="17" height="74" rx="9"/>
+        <circle cx="206" cy="266" r="13"/>`)}
+      ${zone("hip", "엉덩이·허벅지 (고관절·햄스트링)", `
+        <path d="M108 214 H172 L168 262 H112 Z"/>
+        <rect x="115" y="258" width="24" height="74" rx="11"/>
+        <rect x="141" y="258" width="24" height="74" rx="11"/>`)}
+      ${zone("knee", "무릎 (러너스니·점퍼스니·관절염)", `
+        <ellipse cx="127" cy="346" rx="15" ry="17"/>
+        <ellipse cx="153" cy="346" rx="15" ry="17"/>`)}
+      ${zone("foot", "발목·발 (염좌·족저근막염·아킬레스)", `
+        <rect x="117" y="362" width="20" height="96" rx="9"/>
+        <rect x="143" y="362" width="20" height="96" rx="9"/>
+        <path d="M117 456 H137 L141 478 H113 Z"/>
+        <path d="M143 456 H163 L167 478 H139 Z"/>`)}
+    </svg>
+    <p class="bm-hint">그림에서 아픈 부위를 누르세요</p>
+  </div>`;
+}
+
 /* 홈 상단의 개인화 영역: 즐겨찾기 + 최근 본 질환 */
 function personalSectionsHTML() {
   const favIds = Store.favorites();
@@ -191,7 +234,11 @@ function renderHome() {
     ${personalSectionsHTML()}
 
     <h2 class="section-title">📍 아픈 부위를 선택하세요</h2>
-    <div class="category-grid">${catCards}</div>
+    <p class="section-sub">그림에서 아픈 곳을 누르거나, 오른쪽 목록에서 골라도 됩니다.</p>
+    <div class="bodymap-layout">
+      ${bodyMapHTML()}
+      <div class="category-grid">${catCards}</div>
+    </div>
 
     <h2 class="section-title">🧭 이렇게 사용하세요</h2>
     <div class="steps">
@@ -551,7 +598,12 @@ app.addEventListener("click", (e) => {
   // 인쇄 / PDF
   if (e.target.closest("[data-print]")) {
     window.print();
+    return;
   }
+
+  // 통증 부위 그림 → 카테고리 이동
+  const zone = e.target.closest("[data-cat]");
+  if (zone) location.hash = "#/category/" + zone.getAttribute("data-cat");
 });
 app.addEventListener("keydown", (e) => {
   if (e.key !== "Enter" && e.key !== " ") return;
@@ -559,6 +611,12 @@ app.addEventListener("keydown", (e) => {
   if (li && app.contains(li)) {
     e.preventDefault();
     toggleSymptom(li);
+    return;
+  }
+  const zone = e.target.closest("[data-cat]");
+  if (zone) {
+    e.preventDefault();
+    location.hash = "#/category/" + zone.getAttribute("data-cat");
   }
 });
 
