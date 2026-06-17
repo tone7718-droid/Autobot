@@ -40,11 +40,11 @@ function ytSearch(exerciseName, conditionName) {
 
 const SITE_TITLE = "내 통증 사용설명서";
 const DEFAULT_DESC =
-  "거북목부터 족저근막염까지, 가장 흔한 근골격계 질환 30가지. 증상 체크·자가 평가·수동 치료·운동 처방까지 스스로 통증의 원인을 찾고 해결하세요.";
+  "거북목부터 족저근막염까지, 가장 흔한 근골격계 질환 40가지. 증상 체크·자가 평가·수동 치료·운동 처방까지 스스로 통증의 원인을 찾고 해결하세요.";
 
 /* 페이지별 제목 / 공유 메타 갱신 (탭 제목 + JS 실행 크롤러 대응) */
 function setMeta(title, desc) {
-  const fullTitle = title ? `${title} — ${SITE_TITLE}` : `${SITE_TITLE} — 근골격계 질환 30 가이드`;
+  const fullTitle = title ? `${title} — ${SITE_TITLE}` : `${SITE_TITLE} — 근골격계 질환 40 가이드`;
   document.title = fullTitle;
   const d = desc || DEFAULT_DESC;
   const map = {
@@ -226,7 +226,7 @@ function renderHome() {
     <section class="hero">
       <h1>내 통증, 원인을 알면<br /><span>스스로 해결</span>할 수 있습니다</h1>
       <p>
-        동네 병원에서 가장 자주 만나는 근골격계 질환 <strong>30가지</strong>를
+        동네 병원에서 가장 자주 만나는 근골격계 질환 <strong>40가지</strong>를
         고등학생도 이해할 수 있는 쉬운 말로 풀었습니다.
         증상을 체크하고, 간단한 자가 평가로 원인을 좁히고,
         수동 치료와 능동 치료(운동)로 직접 관리해 보세요.
@@ -255,11 +255,11 @@ function renderHome() {
       <div class="step"><span class="step-num">4</span><h4>능동 치료 실천</h4><p>핵심은 운동! 단계별 운동으로 통증의 뿌리를 해결합니다.</p></div>
     </div>
 
-    <h2 class="section-title">📚 전체 질환 30가지</h2>
+    <h2 class="section-title">📚 전체 질환 40가지</h2>
     <p class="section-sub">전체 목록에서 바로 찾아볼 수도 있습니다.</p>
     <div class="condition-list">${CONDITIONS.slice(0, 6).map(itemHTML).join("")}</div>
     <p style="text-align:center; margin-top:18px;">
-      <a href="#/all" style="color:var(--primary); font-weight:700;">전체 30개 질환 모두 보기 →</a>
+      <a href="#/all" style="color:var(--primary); font-weight:700;">전체 40개 질환 모두 보기 →</a>
     </p>
   `;
 }
@@ -483,7 +483,7 @@ function renderGuide() {
     <section class="content-section guide-section">
       <h2>이 전자책은 무엇인가요?</h2>
       <p class="lead">
-        동네 정형외과·재활의학과에서 가장 자주 진단되는 근골격계 질환 30가지를,
+        동네 정형외과·재활의학과에서 가장 자주 진단되는 근골격계 질환 40가지를,
         재활 트레이닝과 스포츠의학 관점에서 정리한 자가 관리 가이드입니다.
         어려운 의학 용어 대신 일상 언어로 설명하고, 모든 질환을 같은 구조로 정리했습니다.
       </p>
@@ -531,7 +531,7 @@ function route() {
   window.scrollTo(0, 0);
 
   if (!page) { renderHome(); return setMeta(null, DEFAULT_DESC); }
-  if (page === "all") { renderAll(); return setMeta("전체 질환 30가지"); }
+  if (page === "all") { renderAll(); return setMeta("전체 질환 40가지"); }
   if (page === "guide") { renderGuide(); return setMeta("이용 안내"); }
   if (page === "category" && param) {
     renderCategory(param);
