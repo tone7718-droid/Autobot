@@ -569,6 +569,40 @@ mark { background: #ffe066; border-radius: 3px; padding: 0 2px; }
 }
 .back-top.show { display: block; }
 
+/* ---------- 질환 상세 액션 버튼 (즐겨찾기 / 인쇄) ---------- */
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: -10px 0 22px;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+}
+.action-btn:hover { border-color: var(--primary); }
+.fav-btn .star { font-size: 1.1rem; color: #f0a500; line-height: 1; }
+.fav-btn.is-fav {
+  background: #fff8e6;
+  border-color: #f0a500;
+  color: #8a6100;
+}
+.print-btn:hover { background: var(--primary-light); color: var(--primary-dark); }
+
+/* 화면에서는 인쇄전용 요소 숨김 */
+.print-only { display: none; }
+
 @media (max-width: 600px) {
   .hero h1 { font-size: 1.5rem; }
   .condition-header h1 { font-size: 1.35rem; }
@@ -576,4 +610,80 @@ mark { background: #ffe066; border-radius: 3px; padding: 0 2px; }
   .content-section { padding: 20px 18px; }
   .detail-nav { flex-direction: column; }
   .detail-nav .next { text-align: left; }
+}
+
+/* ---------- 인쇄 / PDF 저장용 (1장 핸드아웃) ---------- */
+@media print {
+  :root { --shadow: none; }
+  body { background: #fff; color: #000; line-height: 1.5; font-size: 11pt; }
+  .site-header, .site-footer, .back-top,
+  .no-print, .toc-chips, .detail-nav, .detail-actions,
+  .symptom-result { display: none !important; }
+
+  .print-only { display: block; }
+  main { padding: 0 !important; }
+  .container { max-width: 100% !important; padding: 0 !important; }
+
+  /* 헤더: 잉크 절약 위해 컬러 블록 대신 단순 텍스트 */
+  .condition-header {
+    background: #fff !important;
+    color: #000 !important;
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 12px 16px !important;
+    margin-bottom: 14px !important;
+  }
+  .condition-header .cat-label {
+    background: none !important;
+    color: #000 !important;
+    padding: 0 !important;
+    font-weight: 700;
+  }
+  .condition-header h1 { font-size: 18pt !important; }
+  .condition-header .eng-name,
+  .condition-header .summary { color: #000 !important; opacity: 1 !important; }
+
+  .content-section {
+    border: 1px solid #999;
+    border-radius: 6px;
+    padding: 12px 14px !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .content-section h2 { font-size: 13pt !important; }
+  .badge { border: 1px solid #000; }
+
+  /* 체크박스 빈 칸으로 인쇄 (환자가 손으로 체크) */
+  .symptom-checklist li.symptom-check {
+    border: none !important;
+    background: none !important;
+    padding: 3px 0 !important;
+  }
+  .symptom-check .sc-box {
+    border: 1.5px solid #000 !important;
+    background: #fff !important;
+  }
+  .symptom-check.checked .sc-box::after { color: #000 !important; }
+
+  .check-list li, .test-card, .therapy-card, .note {
+    background: #fff !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .test-card, .therapy-card { border: 1px solid #999 !important; }
+  .warning-section { border: 2px solid #000 !important; background: #fff !important; }
+  .warning-section h2 { color: #000 !important; }
+
+  .dose { background: none !important; border: 1px solid #000; color: #000 !important; }
+
+  .print-footer {
+    margin-top: 14px;
+    font-size: 9pt;
+    color: #333;
+    border-top: 1px solid #999;
+    padding-top: 8px;
+  }
+  a { color: #000 !important; text-decoration: none !important; }
 }

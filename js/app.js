@@ -78,7 +78,88 @@ function ensureMeta(selector, attr, val) {
   return el;
 }
 
+/* ---------- 로컬 저장소 (즐겨찾기 · 최근 본 질환) ---------- */
+const Store = {
+  KEY_FAV: "mtm_favorites",
+  KEY_RECENT: "mtm_recent",
+  MAX_RECENT: 6,
+
+  _read(key) {
+    try {
+      const v = JSON.parse(localStorage.getItem(key));
+      return Array.isArray(v) ? v : [];
+    } catch (e) {
+      return [];
+    }
+  },
+  _write(key, arr) {
+    try {
+      localStorage.setItem(key, JSON.stringify(arr));
+    } catch (e) {
+      /* 사생활 보호 모드 등에서 저장 실패 시 무시 */
+    }
+  },
+
+  favorites() {
+    return this._read(this.KEY_FAV).filter((id) => CONDITIONS.some((c) => c.id === id));
+  },
+  isFavorite(id) {
+    return this._read(this.KEY_FAV).includes(id);
+  },
+  toggleFavorite(id) {
+    const favs = this._read(this.KEY_FAV);
+    const i = favs.indexOf(id);
+    if (i === -1) favs.unshift(id);
+    else favs.splice(i, 1);
+    this._write(this.KEY_FAV, favs);
+    return i === -1; // 추가됐으면 true
+  },
+
+  recents() {
+    return this._read(this.KEY_RECENT).filter((id) => CONDITIONS.some((c) => c.id === id));
+  },
+  pushRecent(id) {
+    let r = this._read(this.KEY_RECENT).filter((x) => x !== id);
+    r.unshift(id);
+    r = r.slice(0, this.MAX_RECENT);
+    this._write(this.KEY_RECENT, r);
+  },
+};
+
+
 /* ---------- 페이지: 홈 ---------- */
+/* 홈 상단의 개인화 영역: 즐겨찾기 + 최근 본 질환 */
+function personalSectionsHTML() {
+  const favIds = Store.favorites();
+  const recentIds = Store.recents().filter((id) => !favIds.includes(id));
+  let html = "";
+
+  if (favIds.length) {
+    const items = favIds
+      .map((id) => CONDITIONS.find((c) => c.id === id))
+      .filter(Boolean)
+      .map(itemHTML)
+      .join("");
+    html += `
+      <h2 class="section-title">⭐ 내 즐겨찾기</h2>
+      <p class="section-sub">관심 있는 질환을 모아 두었습니다. 별을 다시 누르면 해제됩니다.</p>
+      <div class="condition-list">${items}</div>`;
+  }
+
+  if (recentIds.length) {
+    const items = recentIds
+      .map((id) => CONDITIONS.find((c) => c.id === id))
+      .filter(Boolean)
+      .map(itemHTML)
+      .join("");
+    html += `
+      <h2 class="section-title">🕒 최근 본 질환</h2>
+      <div class="condition-list">${items}</div>`;
+  }
+
+  return html;
+}
+
 function renderHome() {
   const catCards = CATEGORIES.map((cat) => {
     const n = conditionsIn(cat.id).length;
@@ -106,6 +187,8 @@ function renderHome() {
       </form>
       <p class="search-hint">예시: "아침에 첫발 디딜 때 발뒤꿈치", "어깨 들 때 통증", "손 저림"</p>
     </section>
+
+    ${personalSectionsHTML()}
 
     <h2 class="section-title">📍 아픈 부위를 선택하세요</h2>
     <div class="category-grid">${catCards}</div>
@@ -173,6 +256,8 @@ function itemHTML(c) {
 function renderCondition(id) {
   const c = CONDITIONS.find((x) => x.id === id);
   if (!c) return renderNotFound();
+  Store.pushRecent(c.id);
+  const fav = Store.isFavorite(c.id);
   const cat = catOf(c.category);
   const list = conditionsIn(c.category);
   const idx = list.indexOf(c);
@@ -210,7 +295,7 @@ function renderCondition(id) {
   const warningsHTML = c.warnings.map((s) => `<li>${s}</li>`).join("");
 
   app.innerHTML = `
-    <nav class="breadcrumb">
+    <nav class="breadcrumb no-print">
       <a href="#/">홈</a> › <a href="#/category/${cat.id}">${cat.name}</a> › ${c.name}
     </nav>
 
@@ -221,7 +306,18 @@ function renderCondition(id) {
       <p class="summary">${c.summary}</p>
     </header>
 
-    <nav class="toc-chips">
+    <div class="detail-actions no-print">
+      <button type="button" class="action-btn fav-btn ${fav ? "is-fav" : ""}"
+              data-fav="${c.id}" aria-pressed="${fav}">
+        <span class="star">${fav ? "★" : "☆"}</span>
+        <span class="fav-label">${fav ? "즐겨찾기 됨" : "즐겨찾기"}</span>
+      </button>
+      <button type="button" class="action-btn print-btn" data-print="1">
+        🖨 인쇄 / PDF로 저장
+      </button>
+    </div>
+
+    <nav class="toc-chips no-print">
       <a href="#sec-what">어떤 질환인가요?</a>
       <a href="#sec-symptoms">증상 체크</a>
       <a href="#sec-tests">자가 평가</a>
@@ -268,7 +364,13 @@ function renderCondition(id) {
       <ul class="check-list warning-list">${warningsHTML}</ul>
     </section>
 
-    <nav class="detail-nav">
+    <p class="print-only print-footer">
+      ⚠️ 이 자료는 건강 정보 제공용이며 의사의 진단·치료를 대신하지 않습니다.
+      증상이 2주 이상 지속되거나 위 위험 신호에 해당하면 의료기관을 방문하세요.
+      · 내 통증 사용설명서
+    </p>
+
+    <nav class="detail-nav no-print">
       ${prev ? `<a href="#/condition/${prev.id}"><span class="nav-label">← 이전 질환</span>${prev.name}</a>` : "<span style='flex:1'></span>"}
       ${next ? `<a class="next" href="#/condition/${next.id}"><span class="nav-label">다음 질환 →</span>${next.name}</a>` : "<span style='flex:1'></span>"}
     </nav>
@@ -429,7 +531,27 @@ function updateSymptomResult(listEl) {
 
 app.addEventListener("click", (e) => {
   const li = e.target.closest(".symptom-check");
-  if (li && app.contains(li)) toggleSymptom(li);
+  if (li && app.contains(li)) {
+    toggleSymptom(li);
+    return;
+  }
+
+  // 즐겨찾기 토글
+  const favBtn = e.target.closest("[data-fav]");
+  if (favBtn) {
+    const id = favBtn.getAttribute("data-fav");
+    const added = Store.toggleFavorite(id);
+    favBtn.classList.toggle("is-fav", added);
+    favBtn.setAttribute("aria-pressed", String(added));
+    favBtn.querySelector(".star").textContent = added ? "★" : "☆";
+    favBtn.querySelector(".fav-label").textContent = added ? "즐겨찾기 됨" : "즐겨찾기";
+    return;
+  }
+
+  // 인쇄 / PDF
+  if (e.target.closest("[data-print]")) {
+    window.print();
+  }
 });
 app.addEventListener("keydown", (e) => {
   if (e.key !== "Enter" && e.key !== " ") return;
