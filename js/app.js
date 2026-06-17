@@ -31,6 +31,13 @@ function esc(s) {
   }[m]));
 }
 
+/* 운동 영상 검색 링크 — 깨지지 않도록 특정 URL 대신 YouTube 검색으로 연결 */
+function ytSearch(exerciseName, conditionName) {
+  const clean = String(exerciseName).replace(/\([^)]*\)/g, "").trim();
+  const q = `${clean} 재활운동`;
+  return "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+}
+
 const SITE_TITLE = "내 통증 사용설명서";
 const DEFAULT_DESC =
   "거북목부터 족저근막염까지, 가장 흔한 근골격계 질환 30가지. 증상 체크·자가 평가·수동 치료·운동 처방까지 스스로 통증의 원인을 찾고 해결하세요.";
@@ -336,7 +343,11 @@ function renderCondition(id) {
     <div class="therapy-card active">
       <h4>🏃 ${t.name}</h4>
       <p class="desc">${t.how}</p>
-      ${t.dose ? `<span class="dose">⏱ ${t.dose}</span>` : ""}
+      <div class="card-bottom">
+        ${t.dose ? `<span class="dose">⏱ ${t.dose}</span>` : "<span></span>"}
+        <a class="video-link no-print" href="${ytSearch(t.name, c.name)}"
+           target="_blank" rel="noopener noreferrer">▶ 영상으로 보기</a>
+      </div>
     </div>`).join("");
 
   const warningsHTML = c.warnings.map((s) => `<li>${s}</li>`).join("");
@@ -629,3 +640,12 @@ document.body.appendChild(topBtn);
 window.addEventListener("scroll", () => {
   topBtn.classList.toggle("show", window.scrollY > 600);
 });
+
+/* ---------- 서비스 워커 등록 (오프라인 지원) ---------- */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {
+      /* 등록 실패는 무시 — 온라인에서는 정상 동작 */
+    });
+  });
+}

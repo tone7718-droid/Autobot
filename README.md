@@ -25,6 +25,8 @@
 - 🖨 **인쇄 / PDF 핸드아웃** — 치료사가 환자에게 1장으로 출력해 줄 수 있는 인쇄 스타일
 - 🔍 **증상 키워드 검색** — 질환명·증상·원인 전체에서 매칭
 - 📲 **SNS 공유 카드** — 카카오톡·트위터 등 OG 미리보기, 질환별 제목 동적 갱신
+- ▶ **운동 영상 링크** — 능동 치료 운동마다 YouTube 검색 연결 (깨지지 않는 검색 URL)
+- 📱 **PWA(앱 설치 · 오프라인)** — 홈 화면에 설치하고, 한 번 연 뒤엔 오프라인에서도 열람
 
 ### 수록 질환 (40)
 
@@ -41,11 +43,13 @@
 빌드 과정이 전혀 없는 **순수 정적 사이트**(HTML + CSS + Vanilla JS)입니다.
 
 ```
-index.html          # 단일 페이지 앱 진입점
-css/style.css       # 전체 스타일 (인쇄용 @media print 포함)
-js/app.js           # 해시 라우터 + 렌더러 + 검색 + body map + 저장/공유
-js/data/*.js        # 카테고리별 질환 콘텐츠 (neck~foot + extra, 40개 질환)
-assets/             # OG 공유 이미지 + 생성 스크립트
+index.html             # 단일 페이지 앱 진입점
+css/style.css          # 전체 스타일 (인쇄용 @media print 포함)
+js/app.js              # 해시 라우터 + 렌더러 + 검색 + body map + 저장/공유 + SW 등록
+js/data/*.js           # 카테고리별 질환 콘텐츠 (neck~foot + extra, 40개 질환)
+manifest.webmanifest   # PWA 매니페스트
+sw.js                  # 서비스 워커 (오프라인 캐시)
+assets/                # OG·앱 아이콘 + 순수 Node 생성 스크립트
 ```
 
 - 해시 라우팅: `#/category/neck`, `#/condition/tennis-elbow`, `#/search/검색어`

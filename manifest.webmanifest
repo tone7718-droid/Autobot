@@ -1,0 +1,17 @@
+{
+  "name": "내 통증 사용설명서 — 근골격계 질환 가이드",
+  "short_name": "통증 사용설명서",
+  "description": "동네 병원에서 흔한 근골격계 질환 40가지. 증상 체크·자가 평가·운동 처방을 스스로.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f8fa",
+  "theme_color": "#1a73a7",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
