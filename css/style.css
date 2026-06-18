@@ -71,6 +71,21 @@ body {
 
 .header-nav a:hover { color: var(--primary); }
 
+.lang-toggle {
+  margin-left: 16px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  background: var(--primary-light);
+  border: 1.5px solid var(--primary);
+  border-radius: 999px;
+  padding: 5px 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lang-toggle:hover { background: var(--primary); color: #fff; }
+
 /* ---------- Main ---------- */
 main { min-height: 70vh; padding: 32px 20px 64px; }
 

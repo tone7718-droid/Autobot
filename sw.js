@@ -1,6 +1,6 @@
 /* 서비스 워커 — 오프라인 지원 (앱 셸 + 질환 데이터 캐시)
    콘텐츠를 바꾸면 CACHE 버전을 올려 갱신을 강제한다. */
-const CACHE = "mtm-v2";
+const CACHE = "mtm-v3";
 
 const APP_SHELL = [
   "./",
@@ -15,6 +15,14 @@ const APP_SHELL = [
   "./js/data/knee.js",
   "./js/data/foot.js",
   "./js/data/extra.js",
+  "./js/data/en/neck.js",
+  "./js/data/en/shoulder.js",
+  "./js/data/en/elbow-hand.js",
+  "./js/data/en/back.js",
+  "./js/data/en/hip.js",
+  "./js/data/en/knee.js",
+  "./js/data/en/foot.js",
+  "./js/data/en/extra.js",
   "./manifest.webmanifest",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
