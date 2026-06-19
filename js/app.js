@@ -83,6 +83,15 @@ const I18N = {
     notfound: "페이지를 찾을 수 없습니다.",
     go_home: "홈으로 돌아가기",
     yt_suffix: "재활운동",
+    compare_page: "질환 비교",
+    compare_desc: "두 질환의 증상·치료를 나란히 비교합니다",
+    compare_pick1: "첫 번째 질환",
+    compare_pick2: "두 번째 질환",
+    compare_btn: "⚖️ 비교하기",
+    compare_go: "비교 보기",
+    compare_swap: "↔ 바꾸기",
+    compare_select: "질환 선택…",
+    compare_change: "다른 비교로",
   },
   en: {
     site_title: "My Pain Manual",
@@ -151,6 +160,15 @@ const I18N = {
     notfound: "Page not found.",
     go_home: "Back to home",
     yt_suffix: "rehab exercise",
+    compare_page: "Compare Conditions",
+    compare_desc: "View symptoms and treatments side by side",
+    compare_pick1: "First condition",
+    compare_pick2: "Second condition",
+    compare_btn: "⚖️ Compare",
+    compare_go: "Compare",
+    compare_swap: "↔ Swap",
+    compare_select: "Select condition…",
+    compare_change: "Change comparison",
   },
 };
 
@@ -475,6 +493,7 @@ function renderCondition(id) {
         <span class="fav-label">${fav ? T("fav_on") : T("fav_off")}</span>
       </button>
       <button type="button" class="action-btn print-btn" data-print="1">${T("print_btn")}</button>
+      <a class="action-btn compare-btn" href="#/compare/${c.id}">${T("compare_btn")}</a>
     </div>
 
     <nav class="toc-chips no-print">
@@ -634,10 +653,110 @@ function renderNotFound() {
     </div>`;
 }
 
+/* ---------- 페이지: 질환 비교 피커 ---------- */
+function renderComparePicker(preId) {
+  const makeOpts = (selectedId) => CATEGORIES.map((cat) =>
+    `<optgroup label="${esc(catName(cat))}">` +
+    conditionsIn(cat.id).map((c) => {
+      const v = view(c);
+      const sel = c.id === selectedId ? " selected" : "";
+      return `<option value="${c.id}"${sel}>${esc(v.name)} (${esc(c.eng)})</option>`;
+    }).join("") +
+    "</optgroup>"
+  ).join("");
+
+  const ph = `<option value="">${esc(T("compare_select"))}</option>`;
+
+  app.innerHTML = `
+    <nav class="breadcrumb"><a href="#/">${T("nav_home")}</a> › ${T("compare_page")}</nav>
+    <div class="cmp-picker">
+      <h1 class="section-title" style="margin-top:0;">${T("compare_page")}</h1>
+      <p class="section-sub">${T("compare_desc")}</p>
+      <div class="cmp-picker-grid">
+        <div class="cmp-slot">
+          <div class="cmp-badge cmp-a">A</div>
+          <label for="cmpA">${T("compare_pick1")}</label>
+          <select id="cmpA">${ph}${makeOpts(preId)}</select>
+        </div>
+        <div class="cmp-vs-mid">vs</div>
+        <div class="cmp-slot">
+          <div class="cmp-badge cmp-b">B</div>
+          <label for="cmpB">${T("compare_pick2")}</label>
+          <select id="cmpB">${ph}${makeOpts("")}</select>
+        </div>
+      </div>
+      <button class="cmp-go-btn" id="compareGoBtn">${T("compare_go")}</button>
+    </div>`;
+}
+
+/* ---------- 페이지: 질환 비교 ---------- */
+function renderCompareItem(item, type) {
+  if (item == null) return `<span class="cmp-empty">—</span>`;
+  if (type === "symptom" || type === "warning") return esc(String(item));
+  if (type === "test") return `<strong>${esc(item.name)}</strong><br><small class="cmp-sub">${esc(item.how)}</small>`;
+  if (type === "passive") return `<strong>${esc(item.name)}</strong><br><small class="cmp-sub">${esc(item.desc)}</small>`;
+  if (type === "active") return `<strong>${esc(item.name)}</strong><br><small class="cmp-sub">${esc(item.how)}</small>`;
+  return esc(String(item));
+}
+
+function compareSection(heading, arr1, arr2, type) {
+  const max = Math.max(arr1.length, arr2.length);
+  if (!max) return "";
+  let rows = "";
+  for (let i = 0; i < max; i++) {
+    rows += `<div class="cmp-row">
+      <div class="cmp-cell cmp-a">${renderCompareItem(arr1[i], type)}</div>
+      <div class="cmp-cell cmp-b">${renderCompareItem(arr2[i], type)}</div>
+    </div>`;
+  }
+  return `<div class="cmp-section">
+    <h3 class="cmp-section-head">${heading}</h3>
+    ${rows}
+  </div>`;
+}
+
+function renderComparison(id1, id2) {
+  const c1 = CONDITIONS.find((x) => x.id === id1);
+  const c2 = CONDITIONS.find((x) => x.id === id2);
+  if (!c1 || !c2) return renderNotFound();
+  const v1 = view(c1);
+  const v2 = view(c2);
+
+  app.innerHTML = `
+    <nav class="breadcrumb no-print">
+      <a href="#/">${T("nav_home")}</a> › <a href="#/compare">${T("compare_page")}</a>
+    </nav>
+    <div class="cmp-page">
+      <div class="cmp-top-actions no-print">
+        <a href="#/compare" class="cmp-btn-back">← ${T("compare_change")}</a>
+        <a href="#/compare/${esc(id2)}/${esc(id1)}" class="cmp-btn-swap">${T("compare_swap")}</a>
+      </div>
+      <div class="cmp-header-grid">
+        <div class="cmp-head-card cmp-a">
+          <span class="cmp-badge cmp-a">A</span>
+          <h2>${esc(v1.name)}<span class="eng">${esc(c1.eng)}</span></h2>
+          <p class="cmp-summary">${esc(v1.summary)}</p>
+          <a href="#/condition/${esc(id1)}" class="cmp-detail-link">→ ${T("sec_what")}</a>
+        </div>
+        <div class="cmp-head-card cmp-b">
+          <span class="cmp-badge cmp-b">B</span>
+          <h2>${esc(v2.name)}<span class="eng">${esc(c2.eng)}</span></h2>
+          <p class="cmp-summary">${esc(v2.summary)}</p>
+          <a href="#/condition/${esc(id2)}" class="cmp-detail-link">→ ${T("sec_what")}</a>
+        </div>
+      </div>
+      ${compareSection(T("sec_symptoms"), v1.symptoms, v2.symptoms, "symptom")}
+      ${compareSection(T("sec_tests"), v1.selfTests, v2.selfTests, "test")}
+      ${compareSection(T("sec_passive"), v1.passive, v2.passive, "passive")}
+      ${compareSection(T("sec_active"), v1.active, v2.active, "active")}
+      ${compareSection(T("sec_warning"), v1.warnings, v2.warnings, "warning")}
+    </div>`;
+}
+
 /* ---------- 라우터 ---------- */
 function route() {
   const hash = location.hash.replace(/^#/, "") || "/";
-  const [, page, param] = hash.split("/");
+  const [, page, param, param2] = hash.split("/");
   window.scrollTo(0, 0);
   applyChrome();
 
@@ -654,6 +773,17 @@ function route() {
     const c = CONDITIONS.find((x) => x.id === param);
     if (c) { const v = view(c); return setMeta(v.name, v.summary); }
     return setMeta(null);
+  }
+  if (page === "compare") {
+    if (param && param2) {
+      renderComparison(param, param2);
+      const c1 = CONDITIONS.find((x) => x.id === param);
+      const c2 = CONDITIONS.find((x) => x.id === param2);
+      if (c1 && c2) { const v1 = view(c1), v2 = view(c2); return setMeta(`${v1.name} vs ${v2.name}`, v1.summary); }
+      return setMeta(T("compare_page"));
+    }
+    renderComparePicker(param || "");
+    return setMeta(T("compare_page"), T("compare_desc"));
   }
   if (page === "search") { renderSearch(param || ""); return setMeta(T("bc_search")); }
   renderNotFound();
@@ -707,6 +837,13 @@ app.addEventListener("click", (e) => {
     return;
   }
   if (e.target.closest("[data-print]")) { window.print(); return; }
+
+  if (e.target.closest("#compareGoBtn")) {
+    const a = document.getElementById("cmpA")?.value;
+    const b = document.getElementById("cmpB")?.value;
+    if (a && b) location.hash = `#/compare/${a}/${b}`;
+    return;
+  }
 
   const zone = e.target.closest("[data-cat]");
   if (zone) location.hash = "#/category/" + zone.getAttribute("data-cat");

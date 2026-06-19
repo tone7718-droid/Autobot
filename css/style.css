@@ -692,6 +692,100 @@ mark { background: #ffe066; border-radius: 3px; padding: 0 2px; }
   .detail-nav .next { text-align: left; }
 }
 
+/* ---------- 질환 비교 ---------- */
+.cmp-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%;
+  font-weight: 800; font-size: 0.85rem; color: #fff; flex-shrink: 0;
+}
+.cmp-badge.cmp-a { background: var(--primary); }
+.cmp-badge.cmp-b { background: var(--accent); }
+
+/* picker */
+.cmp-picker { max-width: 680px; margin: 0 auto; padding: 8px 0 48px; }
+.cmp-picker-grid {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: start; gap: 16px; margin-bottom: 28px;
+}
+.cmp-slot { display: flex; flex-direction: column; gap: 8px; }
+.cmp-slot label { font-weight: 600; font-size: 0.9rem; }
+.cmp-slot select {
+  padding: 10px 12px; border-radius: 10px;
+  border: 1.5px solid var(--border); font-size: 0.92rem;
+  font-family: inherit; background: var(--card); width: 100%;
+  cursor: pointer;
+}
+.cmp-slot select:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
+.cmp-vs-mid {
+  font-size: 1.1rem; font-weight: 800; color: var(--text-light);
+  padding-top: 36px; text-align: center;
+}
+.cmp-go-btn {
+  display: block; width: 100%; max-width: 280px; margin: 0 auto;
+  padding: 13px 24px; background: var(--primary); color: #fff;
+  border: none; border-radius: 999px; font-size: 1rem; font-weight: 700;
+  font-family: inherit; cursor: pointer; transition: background 0.15s;
+}
+.cmp-go-btn:hover { background: var(--primary-dark); }
+
+/* comparison page */
+.cmp-page { padding: 4px 0 56px; }
+.cmp-top-actions { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.cmp-btn-back, .cmp-btn-swap {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 999px; font-size: 0.875rem;
+  font-weight: 600; text-decoration: none; transition: background 0.15s;
+}
+.cmp-btn-back { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+.cmp-btn-back:hover { background: var(--bg); }
+.cmp-btn-swap { background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary); }
+.cmp-btn-swap:hover { background: var(--primary); color: #fff; }
+
+.cmp-header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+.cmp-head-card {
+  background: var(--card); border-radius: var(--radius); padding: 20px;
+  border-top: 4px solid var(--primary); display: flex; flex-direction: column; gap: 8px;
+}
+.cmp-head-card.cmp-b { border-top-color: var(--accent); }
+.cmp-head-card h2 { font-size: 1.15rem; margin: 0; }
+.cmp-summary { font-size: 0.88rem; color: var(--text-light); margin: 0; }
+.cmp-detail-link { font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+.cmp-detail-link:hover { text-decoration: underline; }
+
+.cmp-section { margin-bottom: 28px; }
+.cmp-section-head {
+  font-size: 0.95rem; font-weight: 700;
+  padding: 10px 16px; margin-bottom: 8px;
+  background: var(--card); border-radius: 10px;
+  border-left: 4px solid var(--primary);
+}
+.cmp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+.cmp-cell {
+  background: var(--card); border-radius: 10px; padding: 12px 16px;
+  font-size: 0.9rem; line-height: 1.6; border-left: 3px solid transparent;
+}
+.cmp-cell.cmp-a { border-left-color: var(--primary); }
+.cmp-cell.cmp-b { border-left-color: var(--accent); }
+.cmp-empty { color: var(--text-light); font-style: italic; }
+.cmp-sub { color: var(--text-light); font-size: 0.82rem; line-height: 1.5; display: block; margin-top: 4px; }
+
+/* compare button on condition detail */
+.compare-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px; border-radius: 999px; font-size: 0.875rem;
+  font-weight: 600; text-decoration: none;
+  background: var(--primary-light); color: var(--primary-dark);
+  border: 1.5px solid var(--primary); transition: background 0.15s;
+}
+.compare-btn:hover { background: var(--primary); color: #fff; }
+
+@media (max-width: 720px) {
+  .cmp-picker-grid { grid-template-columns: 1fr; }
+  .cmp-vs-mid { padding-top: 0; }
+  .cmp-header-grid { grid-template-columns: 1fr; }
+  .cmp-row { grid-template-columns: 1fr; }
+}
+
 /* ---------- 인쇄 / PDF 저장용 (1장 핸드아웃) ---------- */
 @media print {
   :root { --shadow: none; }

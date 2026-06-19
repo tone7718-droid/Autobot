@@ -1,6 +1,6 @@
 /* 서비스 워커 — 오프라인 지원 (앱 셸 + 질환 데이터 캐시)
    콘텐츠를 바꾸면 CACHE 버전을 올려 갱신을 강제한다. */
-const CACHE = "mtm-v3";
+const CACHE = "mtm-v4";
 
 const APP_SHELL = [
   "./",
