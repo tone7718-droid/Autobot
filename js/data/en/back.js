@@ -149,7 +149,7 @@ window.CONTENT_EN = Object.assign(window.CONTENT_EN || {}, {
     active: [
       {
         name: "Prone back extension (McKenzie extension)",
-        how: "Start propped on the elbows for 1–2 minutes, then progress to pushing up on the hands with the pelvis on the floor. Only for those whose leg symptoms eased in the self-test.",
+        how: "Start propped on the elbows for 1–2 minutes, then progress to pushing up on the hands with the pelvis on the floor. Only for those whose leg symptoms eased in the self-observation.",
         dose: "10 reps × 1 set, 4–6 times a day (every 2 hours)",
       },
       {

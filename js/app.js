@@ -591,7 +591,9 @@ function renderCondition(id) {
 
 /* ---------- 페이지: 검색 ---------- */
 function renderSearch(query) {
-  const q = decodeURIComponent(query || "").trim();
+  let q;
+  try { q = decodeURIComponent(query || "").trim(); }
+  catch (e) { q = String(query || "").trim(); } /* 잘못된 %-인코딩이 와도 라우터가 죽지 않도록 */
   const terms = q.split(/\s+/).filter(Boolean);
   let results = [];
   if (terms.length) {
@@ -629,7 +631,7 @@ const GUIDE_HTML = {
       <ul>
         <li><strong>어떤 질환인가요?</strong> — 질환의 정체와 생기는 이유를 비유로 쉽게 설명합니다.</li>
         <li><strong>증상 체크</strong> — 내 증상과 비교해 볼 수 있는 체크리스트입니다.</li>
-        <li><strong>자가 평가</strong> — 병원에서 쓰는 검사를 집에서 안전하게 해볼 수 있도록 바꾼 것입니다.</li>
+        <li><strong>자가 관찰</strong> — 병원에서 쓰는 검사를 집에서 안전하게 살펴볼 수 있도록 바꾼 것입니다.</li>
         <li><strong>수동 치료</strong> — 도수치료, 물리치료처럼 <em>전문가가 나에게 해주는</em> 치료입니다.</li>
         <li><strong>능동 치료</strong> — <em>내가 직접 하는</em> 운동입니다. 재발을 막는 진짜 치료의 핵심입니다.</li>
         <li><strong>병원에 가야 할 때</strong> — 자가 관리로 버티면 안 되는 위험 신호(red flag)입니다.</li>
@@ -655,7 +657,7 @@ const GUIDE_HTML = {
       <ul>
         <li><strong>What is it?</strong> — Explains what the condition is and why it happens, using simple analogies.</li>
         <li><strong>Symptoms</strong> — A checklist to compare against your own symptoms.</li>
-        <li><strong>Self-tests</strong> — Clinic exams adapted so you can try them safely at home.</li>
+        <li><strong>Self-observations</strong> — Clinic exams adapted so you can observe your symptoms safely at home.</li>
         <li><strong>Hands-on care</strong> — Treatments a <em>professional provides to you</em>, like manual and physical therapy.</li>
         <li><strong>Active care</strong> — Exercises <em>you do yourself</em> — the real key to preventing recurrence.</li>
         <li><strong>When to see a doctor</strong> — Red flags where you should stop self-care.</li>
