@@ -25,17 +25,17 @@ window.CONTENT_EN = Object.assign(window.CONTENT_EN || {}, {
       {
         name: "Wall test",
         how: "Stand with your back to a wall in your usual relaxed posture. With heels, buttocks, and upper back touching the wall, check whether the back of your head also touches.",
-        positive: "If you have to force your neck back to make the back of your head touch — or it touches but pulls and feels uncomfortable — forward head posture has progressed.",
+        positive: "If you have to force your neck back to touch the wall or feel pulling, that response can occur with a forward head position. This test alone cannot determine progression.",
       },
       {
         name: "Ear–shoulder alignment",
         how: "Take a side photo (or have someone look) and draw a vertical line through your ear canal and the middle of your shoulder (the acromion).",
-        positive: "If the ear canal sits more than two finger-widths in front of the shoulder line, that's forward head posture.",
+        positive: "How far the ear appears in front of the shoulder can be a reference for observing alignment. Finger width alone cannot diagnose forward head posture.",
       },
       {
         name: "Chin tuck test",
         how: "Facing forward, pull your chin straight back to make a double chin and hold for 10 seconds.",
-        positive: "If you can't do it, can't hold even 5 seconds without shaking, or the back of the neck pulls hard, the deep neck muscles are weak.",
+        positive: "Difficulty, shaking, or pulling can be a reason to observe neck-muscle endurance and movement control. This response alone does not confirm weakness.",
       },
     ],
     passive: [

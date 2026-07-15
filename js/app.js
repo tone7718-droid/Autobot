@@ -20,16 +20,19 @@ const I18N = {
     site_title: "내 통증 사용설명서",
     title_suffix: "근골격계 질환 40 가이드",
     default_desc:
-      "거북목부터 족저근막염까지, 가장 흔한 근골격계 질환 40가지. 증상 체크·자가 평가·수동 치료·운동 처방까지 스스로 통증의 원인을 찾고 해결하세요.",
+      "거북목부터 족저근막염까지, 가장 흔한 근골격계 질환 40가지를 쉬운 말로 살펴보고 증상과 자가 관리 방법을 정리해 보세요.",
     nav_home: "홈", nav_all: "전체 질환", nav_guide: "이용 안내",
     lang_toggle: "EN", lang_aria: "Switch to English",
     foot_disclaimer:
       "⚠️ 이 전자책은 건강 정보 제공을 목적으로 하며, 의사의 진단과 치료를 대신할 수 없습니다. 통증이 심하거나 오래 지속되면 반드시 의료기관을 방문하세요.",
     foot_copyright:
       "© 2026 내 통증 사용설명서 · 재활 트레이닝 & 스포츠의학 기반 자가 관리 가이드",
-    hero_title: '내 통증, 원인을 알면<br /><span>스스로 해결</span>할 수 있습니다',
+    hero_title: '내 통증을 이해하면<br /><span>관리의 실마리</span>를 찾을 수 있습니다',
     hero_intro:
-      '동네 병원에서 가장 자주 만나는 근골격계 질환 <strong>40가지</strong>를 고등학생도 이해할 수 있는 쉬운 말로 풀었습니다. 증상을 체크하고, 간단한 자가 평가로 원인을 좁히고, 수동 치료와 능동 치료(운동)로 직접 관리해 보세요.',
+      '동네 병원에서 자주 만나는 근골격계 질환 <strong>40가지</strong>를 고등학생도 이해할 수 있는 쉬운 말로 풀었습니다. 증상을 정리하고, 안전한 범위의 자가 관찰과 치료·운동 정보를 살펴보세요.',
+    hero_visual_alt: "목부터 발목까지 주요 통증 부위가 표시된 젊은 여성 일러스트",
+    region_visual_alt: (name) => `${name} 통증 부위와 관련 해부 구조를 보여주는 젊은 여성 일러스트`,
+    region_visual_caption: (name) => `${name} 통증 부위와 관련 구조를 한눈에 살펴보세요.`,
     search_ph: "증상이나 질환 이름으로 검색 (예: 팔꿈치 바깥쪽 통증)",
     search_ph_short: "증상이나 질환 이름으로 검색",
     search_btn: "검색",
@@ -42,9 +45,9 @@ const I18N = {
     how_title: "🧭 이렇게 사용하세요",
     steps: [
       { h: "증상 체크", p: "내 증상과 비슷한 항목이 몇 개나 되는지 체크리스트로 확인합니다." },
-      { h: "자가 평가", p: "집에서 할 수 있는 간단한 검사로 의심 질환을 좁혀 봅니다." },
+      { h: "자가 관찰", p: "집에서 무리 없이 살펴볼 수 있는 항목으로 증상을 정리합니다." },
       { h: "수동 치료 이해", p: "병원·치료실에서 받게 되는 도수치료, 물리치료가 무엇인지 알아봅니다." },
-      { h: "능동 치료 실천", p: "핵심은 운동! 단계별 운동으로 통증의 뿌리를 해결합니다." },
+      { h: "능동 치료 실천", p: "통증 반응을 살피며 단계별 운동과 생활 습관 관리를 실천합니다." },
     ],
     all_title: "📚 전체 질환 40가지",
     all_sub: "전체 목록에서 바로 찾아볼 수도 있습니다.",
@@ -59,13 +62,14 @@ const I18N = {
     fav_on: "즐겨찾기 됨", fav_off: "즐겨찾기",
     print_btn: "🖨 인쇄 / PDF로 저장",
     video_link: "▶ 영상으로 보기",
-    toc: ["어떤 질환인가요?", "증상 체크", "자가 평가", "수동 치료", "능동 치료(운동)", "병원에 가야 할 때"],
+    toc: ["어떤 질환인가요?", "증상 체크", "자가 관찰", "수동 치료", "능동 치료(운동)", "병원에 가야 할 때"],
     sec_what: "📖 어떤 질환인가요?",
     sec_why: "왜 생기나요?",
     sec_symptoms: "✅ 이런 증상이 있나요?",
-    symptoms_lead: '해당하는 항목을 <strong>눌러서 체크</strong>해 보세요. <strong>3개 이상</strong>이면 이 질환일 가능성이 높습니다.',
-    sec_tests: "🔬 집에서 해보는 자가 평가",
-    tests_lead: "아프지 않은 범위에서 천천히 해보세요. 검사 중 통증이 심해지면 바로 멈춥니다.",
+    symptoms_lead: '해당하는 항목을 <strong>눌러서 증상을 정리</strong>해 보세요. 체크 개수는 진단 기준이 아니며, 비슷한 증상이 여러 질환에서 나타날 수 있습니다.',
+    sec_tests: "🔬 집에서 해보는 자가 관찰",
+    tests_lead: "아프지 않은 범위에서 천천히 해보세요. 아래 반응은 증상 관찰을 위한 참고이며 진단을 대신하지 않습니다. 통증이 심해지면 바로 멈춥니다.",
+    test_result_label: "참고: ",
     sec_passive: "🤲 수동 치료", badge_passive: "전문가가 해주는 치료",
     passive_lead: "병원이나 치료실에서 받게 되는 치료입니다. 통증을 빠르게 줄여 운동할 수 있는 몸 상태를 만들어 줍니다.",
     sec_active: "🏃 능동 치료", badge_active: "내가 직접 하는 운동",
@@ -77,8 +81,7 @@ const I18N = {
     search_h: "🔎 검색 결과",
     search_found: (q, n) => `"<strong>${q}</strong>" 관련 질환 ${n}개를 찾았습니다.`,
     search_empty: (q) => `"<strong>${q}</strong>"에 맞는 질환을 찾지 못했습니다.<br/>"팔꿈치", "저림", "무릎 앞쪽"처럼 부위나 느낌으로 검색해 보세요.`,
-    sr_high: (n) => `체크한 증상이 <strong>${n}개</strong>입니다. 이 질환일 <strong>가능성이 높습니다.</strong> 아래의 자가 평가와 능동 치료(운동)를 살펴보고, "🚨 병원에 가야 할 때" 항목에 해당하지 않는지도 꼭 확인하세요.`,
-    sr_low: (n) => `체크한 증상이 <strong>${n}개</strong>입니다. 가능성을 단정하긴 이릅니다. 다른 항목도 천천히 살펴보고, 증상이 애매하면 다른 질환 페이지도 함께 확인해 보세요.`,
+    sr_result: (n) => `체크한 증상이 <strong>${n}개</strong>입니다. 이 결과만으로 특정 질환을 판단할 수 없습니다. 증상이 계속되거나 일상에 지장을 주면 의료 전문가와 상담하고, "🚨 병원에 가야 할 때" 항목도 확인하세요.`,
     guide_h: "📘 이용 안내",
     notfound: "페이지를 찾을 수 없습니다.",
     go_home: "홈으로 돌아가기",
@@ -97,16 +100,19 @@ const I18N = {
     site_title: "My Pain Manual",
     title_suffix: "A Guide to 40 Musculoskeletal Conditions",
     default_desc:
-      "From forward head posture to plantar fasciitis — the 40 most common musculoskeletal conditions. Check your symptoms, run simple self-tests, and manage your pain with hands-on and active (exercise) care.",
+      "Explore 40 common musculoskeletal conditions in plain language and organize your symptoms, safe self-observations, and self-care options.",
     nav_home: "Home", nav_all: "All Conditions", nav_guide: "Guide",
     lang_toggle: "한국어", lang_aria: "한국어로 전환",
     foot_disclaimer:
       "⚠️ This e-book is for health information only and is not a substitute for a doctor's diagnosis or treatment. If your pain is severe or persistent, please see a medical professional.",
     foot_copyright:
       "© 2026 My Pain Manual · A self-care guide based on rehab training & sports medicine",
-    hero_title: 'Know the cause of your pain,<br />and you can <span>solve it yourself</span>',
+    hero_title: 'Understand your pain,<br />and find a <span>safer way to manage it</span>',
     hero_intro:
-      'The <strong>40 most common</strong> musculoskeletal conditions seen at local clinics, explained in plain language anyone can follow. Check your symptoms, narrow down the cause with simple self-tests, and take charge with hands-on and active (exercise) care.',
+      'The <strong>40 common</strong> musculoskeletal conditions seen at local clinics, explained in plain language. Organize your symptoms and review safe self-observations, treatment information, and exercises.',
+    hero_visual_alt: "Illustration of a young woman with common pain areas marked from neck to ankle",
+    region_visual_alt: (name) => `Illustration of a young woman showing ${name.toLowerCase()} pain areas and related anatomy`,
+    region_visual_caption: (name) => `See the common ${name.toLowerCase()} pain areas and related structures at a glance.`,
     search_ph: "Search by symptom or condition (e.g. pain on the outer elbow)",
     search_ph_short: "Search by symptom or condition",
     search_btn: "Search",
@@ -119,9 +125,9 @@ const I18N = {
     how_title: "🧭 How to use this",
     steps: [
       { h: "Check symptoms", p: "Use the checklist to see how many of your symptoms match." },
-      { h: "Self-assess", p: "Narrow down the likely condition with simple at-home tests." },
+      { h: "Observe safely", p: "Use simple, pain-free observations to organize what you notice." },
       { h: "Understand hands-on care", p: "Learn what manual therapy and physical therapy at the clinic involve." },
-      { h: "Do the exercises", p: "Exercise is key — step-by-step movements fix the root of the pain." },
+      { h: "Do the exercises", p: "Follow step-by-step movements while monitoring your symptoms." },
     ],
     all_title: "📚 All 40 Conditions",
     all_sub: "You can also browse the full list directly.",
@@ -136,13 +142,14 @@ const I18N = {
     fav_on: "Saved", fav_off: "Save",
     print_btn: "🖨 Print / Save as PDF",
     video_link: "▶ Watch videos",
-    toc: ["What is it?", "Symptoms", "Self-tests", "Hands-on care", "Exercises", "When to see a doctor"],
+    toc: ["What is it?", "Symptoms", "Self-observations", "Hands-on care", "Exercises", "When to see a doctor"],
     sec_what: "📖 What is this condition?",
     sec_why: "Why does it happen?",
     sec_symptoms: "✅ Do you have these symptoms?",
-    symptoms_lead: '<strong>Tap to check</strong> the items that apply. <strong>3 or more</strong> means this condition is likely.',
-    sec_tests: "🔬 Self-tests you can do at home",
-    tests_lead: "Go slowly and stay within a pain-free range. Stop right away if pain gets worse.",
+    symptoms_lead: '<strong>Tap to organize</strong> the symptoms that apply. The number checked is not a diagnostic threshold, and similar symptoms can occur with different conditions.',
+    sec_tests: "🔬 Self-observations you can do at home",
+    tests_lead: "Go slowly and stay within a pain-free range. These responses are observations, not a diagnosis. Stop right away if pain gets worse.",
+    test_result_label: "For reference: ",
     sec_passive: "🤲 Hands-on care", badge_passive: "Care a professional provides",
     passive_lead: "Treatments you receive at a clinic. They quickly reduce pain so your body is ready to exercise.",
     sec_active: "🏃 Active care", badge_active: "Exercises you do yourself",
@@ -154,8 +161,7 @@ const I18N = {
     search_h: "🔎 Search results",
     search_found: (q, n) => `Found ${n} condition(s) related to "<strong>${q}</strong>".`,
     search_empty: (q) => `No conditions matched "<strong>${q}</strong>".<br/>Try searching by area or feeling, like "elbow", "tingling", or "front of knee".`,
-    sr_high: (n) => `You checked <strong>${n}</strong> symptom(s). This condition is <strong>likely.</strong> Review the self-tests and exercises below, and make sure none of the "🚨 When to see a doctor" items apply.`,
-    sr_low: (n) => `You checked <strong>${n}</strong> symptom(s). It's too early to be sure. Look through the other items, and if your symptoms are vague, check related condition pages too.`,
+    sr_result: (n) => `You checked <strong>${n}</strong> symptom(s). This result cannot identify a specific condition. If symptoms persist or interfere with daily life, consult a medical professional and review the "🚨 When to see a doctor" section.`,
     guide_h: "📘 How to use this guide",
     notfound: "Page not found.",
     go_home: "Back to home",
@@ -194,6 +200,15 @@ const CATEGORIES = [
   { id: "foot", icon: "🦶", name: "발목 · 발", desc: "발목 염좌, 족저근막염, 아킬레스건염 등",
     name_en: "Ankle · Foot", desc_en: "Sprains, plantar fasciitis, Achilles tendon, and more" },
 ];
+const CATEGORY_VISUALS = {
+  neck: "assets/illustrations/neck.webp",
+  shoulder: "assets/illustrations/shoulder.webp",
+  "elbow-hand": "assets/illustrations/elbow-hand.webp",
+  back: "assets/illustrations/back.webp",
+  hip: "assets/illustrations/hip.webp",
+  knee: "assets/illustrations/knee.webp",
+  foot: "assets/illustrations/foot.webp",
+};
 function catName(cat) { return LANG === "en" ? cat.name_en : cat.name; }
 function catDesc(cat) { return LANG === "en" ? cat.desc_en : cat.desc; }
 
@@ -216,6 +231,17 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, (m) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[m]));
+}
+
+function categoryVisualHTML(cat, modifier = "") {
+  const src = CATEGORY_VISUALS[cat.id];
+  if (!src) return "";
+  const name = catName(cat);
+  return `
+    <figure class="region-visual ${modifier} no-print">
+      <img src="${src}" alt="${esc(T("region_visual_alt")(name))}" width="1280" height="960" loading="lazy" decoding="async" />
+      <figcaption>${esc(T("region_visual_caption")(name))}</figcaption>
+    </figure>`;
 }
 
 /* 운동 영상 검색 링크 — 특정 URL 대신 YouTube 검색으로 연결 */
@@ -369,14 +395,19 @@ function renderHome() {
       <div class="step"><span class="step-num">${i + 1}</span><h4>${s.h}</h4><p>${s.p}</p></div>`).join("");
 
   app.innerHTML = `
-    <section class="hero">
-      <h1>${T("hero_title")}</h1>
-      <p>${T("hero_intro")}</p>
-      <form class="search-box" onsubmit="event.preventDefault(); location.hash='#/search/'+encodeURIComponent(this.q.value);">
-        <input name="q" type="text" placeholder="${esc(T("search_ph"))}" />
-        <button type="submit">${T("search_btn")}</button>
-      </form>
-      <p class="search-hint">${T("search_hint")}</p>
+    <section class="hero hero-with-visual">
+      <div class="hero-copy">
+        <h1>${T("hero_title")}</h1>
+        <p>${T("hero_intro")}</p>
+        <form class="search-box" onsubmit="event.preventDefault(); location.hash='#/search/'+encodeURIComponent(this.q.value);">
+          <input name="q" type="text" placeholder="${esc(T("search_ph_short"))}" />
+          <button type="submit">${T("search_btn")}</button>
+        </form>
+        <p class="search-hint">${T("search_hint")}</p>
+      </div>
+      <figure class="hero-visual" aria-hidden="false">
+        <img src="assets/illustrations/hero-pain-guide.webp" alt="${esc(T("hero_visual_alt"))}" width="1600" height="878" decoding="async" fetchpriority="high" />
+      </figure>
     </section>
 
     ${personalSectionsHTML()}
@@ -409,6 +440,7 @@ function renderCategory(catId) {
     <nav class="breadcrumb"><a href="#/">${T("nav_home")}</a> › ${catName(cat)}</nav>
     <h1 class="section-title" style="margin-top:0;">${cat.icon} ${catName(cat)} ${T("cat_suffix")(list.length)}</h1>
     <p class="section-sub">${catDesc(cat)}</p>
+    ${categoryVisualHTML(cat, "category-visual")}
     <div class="condition-list">${list.map(itemHTML).join("")}</div>
   `;
 }
@@ -460,7 +492,7 @@ function renderCondition(id) {
       <span class="sc-box" aria-hidden="true"></span><span class="sc-text">${s}</span>
     </li>`).join("");
   const testsHTML = v.selfTests.map((t) => `
-    <div class="test-card"><h4>🔍 ${t.name}</h4><p class="how">${t.how}</p><p class="positive">${t.positive}</p></div>`).join("");
+    <div class="test-card"><h4>🔍 ${t.name}</h4><p class="how">${t.how}</p><p class="positive"><strong class="test-result-label">${T("test_result_label")}</strong>${t.positive}</p></div>`).join("");
   const passiveHTML = v.passive.map((t) => `
     <div class="therapy-card passive"><h4>🤲 ${t.name}</h4><p class="desc">${t.desc}</p></div>`).join("");
   const activeHTML = v.active.map((t) => `
@@ -497,26 +529,31 @@ function renderCondition(id) {
     </div>
 
     <nav class="toc-chips no-print">
-      <a href="#sec-what">${toc[0]}</a>
-      <a href="#sec-symptoms">${toc[1]}</a>
-      <a href="#sec-tests">${toc[2]}</a>
-      <a href="#sec-passive">${toc[3]}</a>
-      <a href="#sec-active">${toc[4]}</a>
-      <a href="#sec-warning">${toc[5]}</a>
+      <a href="#/condition/${c.id}/sec-what" data-section="sec-what">${toc[0]}</a>
+      <a href="#/condition/${c.id}/sec-symptoms" data-section="sec-symptoms">${toc[1]}</a>
+      <a href="#/condition/${c.id}/sec-tests" data-section="sec-tests">${toc[2]}</a>
+      <a href="#/condition/${c.id}/sec-passive" data-section="sec-passive">${toc[3]}</a>
+      <a href="#/condition/${c.id}/sec-active" data-section="sec-active">${toc[4]}</a>
+      <a href="#/condition/${c.id}/sec-warning" data-section="sec-warning">${toc[5]}</a>
     </nav>
 
     <section class="content-section" id="sec-what">
       <h2>${T("sec_what")}</h2>
-      ${descHTML}
-      <h2 style="font-size:1.05rem; margin-top:18px;">${T("sec_why")}</h2>
-      <ul class="check-list cause-list">${causesHTML}</ul>
+      <div class="condition-overview-grid">
+        <div class="condition-overview-copy">
+          ${descHTML}
+          <h2 style="font-size:1.05rem; margin-top:18px;">${T("sec_why")}</h2>
+          <ul class="check-list cause-list">${causesHTML}</ul>
+        </div>
+        ${categoryVisualHTML(cat, "detail-visual")}
+      </div>
     </section>
 
     <section class="content-section" id="sec-symptoms">
       <h2>${T("sec_symptoms")}</h2>
       <p class="lead">${T("symptoms_lead")}</p>
       <ul class="check-list symptom-checklist" data-total="${v.symptoms.length}">${symptomsHTML}</ul>
-      <div class="symptom-result" id="symptom-result" hidden></div>
+      <div class="symptom-result" id="symptom-result" role="status" aria-live="polite" aria-atomic="true" hidden></div>
     </section>
 
     <section class="content-section" id="sec-tests">
@@ -754,6 +791,24 @@ function renderComparison(id1, id2) {
 }
 
 /* ---------- 라우터 ---------- */
+const CONDITION_SECTION_IDS = new Set([
+  "sec-what", "sec-symptoms", "sec-tests", "sec-passive", "sec-active", "sec-warning",
+]);
+
+function focusConditionSection(sectionId) {
+  if (!CONDITION_SECTION_IDS.has(sectionId)) return;
+  requestAnimationFrame(() => {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    section.scrollIntoView({ block: "start" });
+    const heading = section.querySelector("h2");
+    if (heading) {
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+    }
+  });
+}
+
 function route() {
   const hash = location.hash.replace(/^#/, "") || "/";
   const [, page, param, param2] = hash.split("/");
@@ -770,6 +825,7 @@ function route() {
   }
   if (page === "condition" && param) {
     renderCondition(param);
+    if (param2) focusConditionSection(param2);
     const c = CONDITIONS.find((x) => x.id === param);
     if (c) { const v = view(c); return setMeta(v.name, v.summary); }
     return setMeta(null);
@@ -815,14 +871,23 @@ function updateSymptomResult(listEl) {
   if (!result) return;
   if (count === 0) { result.hidden = true; return; }
   result.hidden = false;
-  const level = count >= 3 ? "high" : "low";
-  const msg = count >= 3 ? T("sr_high")(count) : T("sr_low")(count);
-  result.className = "symptom-result " + level;
+  const msg = T("sr_result")(count);
+  result.className = "symptom-result low";
   result.innerHTML = `<span class="sr-count">${count} / ${total}</span> ${msg}`;
 }
 
 /* ---------- 이벤트 위임 ---------- */
 app.addEventListener("click", (e) => {
+  const sectionLink = e.target.closest("[data-section]");
+  if (sectionLink && app.contains(sectionLink)) {
+    e.preventDefault();
+    const sectionId = sectionLink.getAttribute("data-section");
+    const nextHash = sectionLink.getAttribute("href");
+    if (location.hash === nextHash) focusConditionSection(sectionId);
+    else location.hash = nextHash;
+    return;
+  }
+
   const li = e.target.closest(".symptom-check");
   if (li && app.contains(li)) { toggleSymptom(li); return; }
 

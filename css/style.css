@@ -110,6 +110,35 @@ main { min-height: 70vh; padding: 32px 20px 64px; }
   margin: 0 auto 24px;
 }
 
+.hero-with-visual {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+  align-items: center;
+  gap: 28px;
+  text-align: left;
+  padding: 34px 32px;
+  margin-bottom: 18px;
+  background: linear-gradient(135deg, #fffdf8 0%, #eef7fc 100%);
+  border: 1px solid #dcecf5;
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.hero-with-visual .hero-copy > p { margin-left: 0; margin-right: 0; }
+.hero-with-visual .search-box { margin-left: 0; margin-right: 0; }
+.hero-with-visual .search-hint { text-align: left; margin-bottom: 0; }
+
+.hero-visual { margin: -34px -32px -34px 0; align-self: stretch; }
+.hero-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 330px;
+  object-fit: cover;
+  object-position: 72% center;
+}
+
 /* ---------- Search ---------- */
 .search-box {
   display: flex;
@@ -311,6 +340,41 @@ main { min-height: 70vh; padding: 32px 20px 64px; }
 .condition-header .eng-name { opacity: 0.85; font-size: 0.92rem; margin-top: 4px; }
 .condition-header .summary { margin-top: 14px; font-size: 0.98rem; opacity: 0.95; }
 
+/* ---------- Educational illustrations ---------- */
+.region-visual {
+  margin: 0;
+  background: #fffdf8;
+  border: 1px solid #dcecf5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.region-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.region-visual figcaption {
+  padding: 9px 12px 11px;
+  color: var(--text-light);
+  background: #f7fbfd;
+  border-top: 1px solid #e6f0f5;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.category-visual { max-width: 640px; margin: 0 0 24px; box-shadow: var(--shadow); }
+
+.condition-overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 320px);
+  gap: 24px;
+  align-items: start;
+}
+
 /* ---------- TOC chips ---------- */
 .toc-chips {
   display: flex;
@@ -330,6 +394,8 @@ main { min-height: 70vh; padding: 32px 20px 64px; }
 }
 
 .toc-chips a:hover { background: #d2e8f5; }
+
+.content-section { scroll-margin-top: 84px; }
 
 /* ---------- Content sections ---------- */
 .content-section {
@@ -471,12 +537,12 @@ main { min-height: 70vh; padding: 32px 20px 64px; }
 .test-card .how { font-size: 0.92rem; color: var(--text); margin-bottom: 6px; }
 .test-card .positive {
   font-size: 0.88rem;
-  color: var(--red);
-  background: var(--red-light);
+  color: var(--text);
+  background: #f1f7fa;
   border-radius: 8px;
   padding: 8px 12px;
 }
-.test-card .positive::before { content: "👉 이렇다면 의심: "; font-weight: 700; }
+.test-card .test-result-label { color: var(--primary-dark); }
 
 /* therapy cards */
 .therapy-card {
@@ -675,6 +741,17 @@ mark { background: #ffe066; border-radius: 3px; padding: 0 2px; }
 }
 
 @media (max-width: 720px) {
+  .hero-with-visual {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 24px 18px 26px;
+  }
+  .hero-with-visual .search-box { margin-left: auto; margin-right: auto; }
+  .hero-with-visual .search-hint { text-align: center; }
+  .hero-visual { order: -1; margin: -24px -18px 0; }
+  .hero-visual img { min-height: 0; aspect-ratio: 16 / 9; }
+  .condition-overview-grid { grid-template-columns: 1fr; }
+  .detail-visual { order: -1; max-width: 520px; margin: 0 auto; }
   .bodymap-layout { grid-template-columns: 1fr; }
   .bodymap {
     position: static;
