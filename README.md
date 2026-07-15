@@ -51,13 +51,22 @@ js/app.js              # 해시 라우터 + 렌더러 + 검색 + body map + 저�
 js/data/*.js           # 카테고리별 질환 콘텐츠 (한국어, 40개 질환)
 js/data/en/*.js        # 영어 콘텐츠 (CONTENT_EN, 40개 질환)
 manifest.webmanifest   # PWA 매니페스트
-sw.js                  # 서비스 워커 (오프라인 캐시)
+sw.js                  # 서비스 워커 (오프라인 캐시, 내비게이션 네트워크 우선)
 assets/                # OG·앱 아이콘 + 순수 Node 생성 스크립트
+scripts/               # 데이터 정합성 검증 스크립트
+robots.txt             # 검색엔진 크롤링 허용
+sitemap.xml            # 사이트맵 (루트 URL)
 ```
 
 - 해시 라우팅: `#/category/neck`, `#/condition/tennis-elbow`, `#/compare/tennis-elbow/golfers-elbow`, `#/search/검색어`
 - 증상 키워드 검색: 질환명·증상·원인 텍스트 전체에서 매칭
 - 서버·DB·빌드 도구 불필요 — 정적 호스팅이면 어디서든 동작
+
+콘텐츠(질환 데이터)를 추가·수정한 뒤에는 정합성 검증을 실행하세요:
+
+```bash
+node scripts/validate-data.js   # ko/en 짝 맞춤·중복 id·필수 필드 검사
+```
 
 ## Vercel 배포
 

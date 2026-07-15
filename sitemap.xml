@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 해시(#/...) 라우트는 검색엔진이 별도 페이지로 인식하지 않으므로
+     크롤링 가능한 실제 URL(루트)만 등록한다.
+     질환별 페이지를 노출하려면 정적 사전 생성(prerender)이 필요하다. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://musculoskeletal-disorders.vercel.app/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

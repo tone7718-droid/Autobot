@@ -1,0 +1,53 @@
+내 통증 사용설명서 / My Pain Manual — License
+
+This repository contains two kinds of work under different terms:
+
+================================================================
+1. SOURCE CODE — MIT License
+================================================================
+Applies to: index.html, css/, js/app.js, sw.js, manifest.webmanifest,
+vercel.json, scripts/, and assets/generate-*.js
+(i.e. all software code, EXCLUDING the content described in section 2).
+
+MIT License
+
+Copyright (c) 2026 tone7718-droid (내 통증 사용설명서 / My Pain Manual)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================
+2. CONTENT — All Rights Reserved (저작권 보유)
+================================================================
+Applies to: all health-information content, including but not limited to
+the condition descriptions, symptom checklists, self-observation guides,
+treatment and exercise text in js/data/ and js/data/en/, the guide copy
+embedded in js/app.js, and the illustrations and images in
+assets/illustrations/ and assets/og-image.png.
+
+Copyright (c) 2026 tone7718-droid (내 통증 사용설명서 / My Pain Manual).
+All rights reserved.
+
+이 저장소의 건강 정보 콘텐츠(질환 설명·증상 체크리스트·자가 관찰·치료 및
+운동 설명 텍스트, 일러스트 및 이미지)는 저작권자의 사전 서면 허락 없이
+복제, 수정, 배포, 전송하거나 상업적으로 이용할 수 없습니다.
+
+The content may not be reproduced, modified, distributed, transmitted, or
+used commercially without prior written permission from the copyright holder.
+Viewing and personal, non-commercial use through the published website is
+permitted.

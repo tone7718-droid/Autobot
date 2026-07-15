@@ -1,6 +1,8 @@
 /* 서비스 워커 — 오프라인 지원 (앱 셸 + 질환 데이터 캐시)
-   콘텐츠를 바꾸면 CACHE 버전을 올려 갱신을 강제한다. */
-const CACHE = "mtm-v7";
+   내비게이션은 네트워크 우선, 자원은 stale-while-revalidate라
+   배포만 하면 다음 방문(또는 그다음 방문)에 자동 갱신된다.
+   CACHE 버전은 오래된 캐시 정리용으로만 올리면 된다. */
+const CACHE = "mtm-v8";
 
 const APP_SHELL = [
   "./",
@@ -56,26 +58,33 @@ self.addEventListener("fetch", (e) => {
 
   const url = new URL(req.url);
 
-  // SPA 내비게이션: 항상 캐시된 index.html 로 응답(오프라인에서도 앱이 뜨도록)
+  // SPA 내비게이션: 네트워크 우선(항상 최신 index.html), 오프라인이면 캐시
   if (req.mode === "navigate") {
     e.respondWith(
-      caches.match("./index.html").then((cached) => cached || fetch(req))
+      fetch("./index.html").then((res) => {
+        if (res && res.status === 200) {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put("./index.html", copy));
+        }
+        return res;
+      }).catch(() => caches.match("./index.html"))
     );
     return;
   }
 
-  // 동일 출처 자원: 캐시 우선, 없으면 네트워크 후 캐시에 저장
+  // 동일 출처 자원: stale-while-revalidate — 캐시로 즉시 응답하되
+  // 뒤에서 네트워크로 새 버전을 받아 캐시를 갱신(다음 방문에 반영)
   if (url.origin === self.location.origin) {
     e.respondWith(
       caches.match(req).then((cached) => {
-        if (cached) return cached;
-        return fetch(req).then((res) => {
+        const network = fetch(req).then((res) => {
           if (res && res.status === 200 && res.type === "basic") {
             const copy = res.clone();
             caches.open(CACHE).then((c) => c.put(req, copy));
           }
           return res;
-        }).catch(() => Response.error());
+        }).catch(() => cached || Response.error());
+        return cached || network;
       })
     );
     return;

@@ -95,6 +95,7 @@ const I18N = {
     compare_swap: "↔ 바꾸기",
     compare_select: "질환 선택…",
     compare_change: "다른 비교로",
+    back_top: "맨 위로",
   },
   en: {
     site_title: "My Pain Manual",
@@ -175,6 +176,7 @@ const I18N = {
     compare_swap: "↔ Swap",
     compare_select: "Select condition…",
     compare_change: "Change comparison",
+    back_top: "Back to top",
   },
 };
 
@@ -324,6 +326,7 @@ function applyChrome() {
   if (disc) disc.textContent = T("foot_disclaimer");
   const cp = document.getElementById("footCopyright");
   if (cp) cp.textContent = T("foot_copyright");
+  if (typeof topBtn !== "undefined") topBtn.setAttribute("aria-label", T("back_top"));
 }
 
 /* ---------- 통증 부위 그림 ---------- */
@@ -399,7 +402,7 @@ function renderHome() {
       <div class="hero-copy">
         <h1>${T("hero_title")}</h1>
         <p>${T("hero_intro")}</p>
-        <form class="search-box" onsubmit="event.preventDefault(); location.hash='#/search/'+encodeURIComponent(this.q.value);">
+        <form class="search-box">
           <input name="q" type="text" placeholder="${esc(T("search_ph_short"))}" />
           <button type="submit">${T("search_btn")}</button>
         </form>
@@ -465,8 +468,8 @@ function itemHTML(c) {
   return `
     <a class="condition-item" href="#/condition/${c.id}">
       <div>
-        <h3>${v.name}<span class="eng">${c.eng}</span></h3>
-        <p>${v.summary}</p>
+        <h3>${esc(v.name)}<span class="eng">${esc(c.eng)}</span></h3>
+        <p>${esc(v.summary)}</p>
       </div>
       <span class="arrow">›</span>
     </a>`;
@@ -485,38 +488,38 @@ function renderCondition(id) {
   const prev = list[idx - 1];
   const next = list[idx + 1];
 
-  const descHTML = v.description.map((p) => `<p class="lead">${p}</p>`).join("");
-  const causesHTML = v.causes.map((s) => `<li>${s}</li>`).join("");
+  const descHTML = v.description.map((p) => `<p class="lead">${esc(p)}</p>`).join("");
+  const causesHTML = v.causes.map((s) => `<li>${esc(s)}</li>`).join("");
   const symptomsHTML = v.symptoms.map((s, i) => `
     <li class="symptom-check" data-idx="${i}" role="button" tabindex="0" aria-pressed="false">
-      <span class="sc-box" aria-hidden="true"></span><span class="sc-text">${s}</span>
+      <span class="sc-box" aria-hidden="true"></span><span class="sc-text">${esc(s)}</span>
     </li>`).join("");
   const testsHTML = v.selfTests.map((t) => `
-    <div class="test-card"><h4>🔍 ${t.name}</h4><p class="how">${t.how}</p><p class="positive"><strong class="test-result-label">${T("test_result_label")}</strong>${t.positive}</p></div>`).join("");
+    <div class="test-card"><h4>🔍 ${esc(t.name)}</h4><p class="how">${esc(t.how)}</p><p class="positive"><strong class="test-result-label">${T("test_result_label")}</strong>${esc(t.positive)}</p></div>`).join("");
   const passiveHTML = v.passive.map((t) => `
-    <div class="therapy-card passive"><h4>🤲 ${t.name}</h4><p class="desc">${t.desc}</p></div>`).join("");
+    <div class="therapy-card passive"><h4>🤲 ${esc(t.name)}</h4><p class="desc">${esc(t.desc)}</p></div>`).join("");
   const activeHTML = v.active.map((t) => `
     <div class="therapy-card active">
-      <h4>🏃 ${t.name}</h4>
-      <p class="desc">${t.how}</p>
+      <h4>🏃 ${esc(t.name)}</h4>
+      <p class="desc">${esc(t.how)}</p>
       <div class="card-bottom">
-        ${t.dose ? `<span class="dose">⏱ ${t.dose}</span>` : "<span></span>"}
+        ${t.dose ? `<span class="dose">⏱ ${esc(t.dose)}</span>` : "<span></span>"}
         <a class="video-link no-print" href="${ytSearch(t.name)}" target="_blank" rel="noopener noreferrer">${T("video_link")}</a>
       </div>
     </div>`).join("");
-  const warningsHTML = v.warnings.map((s) => `<li>${s}</li>`).join("");
+  const warningsHTML = v.warnings.map((s) => `<li>${esc(s)}</li>`).join("");
   const toc = T("toc");
 
   app.innerHTML = `
     <nav class="breadcrumb no-print">
-      <a href="#/">${T("nav_home")}</a> › <a href="#/category/${cat.id}">${catName(cat)}</a> › ${v.name}
+      <a href="#/">${T("nav_home")}</a> › <a href="#/category/${cat.id}">${catName(cat)}</a> › ${esc(v.name)}
     </nav>
 
     <header class="condition-header">
       <span class="cat-label">${cat.icon} ${catName(cat)}</span>
-      <h1>${v.name}</h1>
-      <p class="eng-name">${c.eng}</p>
-      <p class="summary">${v.summary}</p>
+      <h1>${esc(v.name)}</h1>
+      <p class="eng-name">${esc(c.eng)}</p>
+      <p class="summary">${esc(v.summary)}</p>
     </header>
 
     <div class="detail-actions no-print">
@@ -572,7 +575,7 @@ function renderCondition(id) {
       <h2>${T("sec_active")} <span class="badge badge-active">${T("badge_active")}</span></h2>
       <p class="lead">${T("active_lead")}</p>
       ${activeHTML}
-      ${v.note ? `<div class="note"><strong>${T("coach")}</strong> ${v.note}</div>` : ""}
+      ${v.note ? `<div class="note"><strong>${T("coach")}</strong> ${esc(v.note)}</div>` : ""}
     </section>
 
     <section class="content-section warning-section" id="sec-warning">
@@ -583,8 +586,8 @@ function renderCondition(id) {
     <p class="print-only print-footer">${T("print_footer")}</p>
 
     <nav class="detail-nav no-print">
-      ${prev ? `<a href="#/condition/${prev.id}"><span class="nav-label">${T("prev_label")}</span>${view(prev).name}</a>` : "<span style='flex:1'></span>"}
-      ${next ? `<a class="next" href="#/condition/${next.id}"><span class="nav-label">${T("next_label")}</span>${view(next).name}</a>` : "<span style='flex:1'></span>"}
+      ${prev ? `<a href="#/condition/${prev.id}"><span class="nav-label">${T("prev_label")}</span>${esc(view(prev).name)}</a>` : "<span style='flex:1'></span>"}
+      ${next ? `<a class="next" href="#/condition/${next.id}"><span class="nav-label">${T("next_label")}</span>${esc(view(next).name)}</a>` : "<span style='flex:1'></span>"}
     </nav>
   `;
 }
@@ -610,7 +613,7 @@ function renderSearch(query) {
   app.innerHTML = `
     <nav class="breadcrumb"><a href="#/">${T("nav_home")}</a> › ${T("bc_search")}</nav>
     <h1 class="section-title" style="margin-top:0;">${T("search_h")}</h1>
-    <form class="search-box" style="margin:0 0 18px;" onsubmit="event.preventDefault(); location.hash='#/search/'+encodeURIComponent(this.q.value);">
+    <form class="search-box" style="margin:0 0 18px;">
       <input name="q" type="text" value="${esc(q)}" placeholder="${esc(T("search_ph_short"))}" />
       <button type="submit">${T("search_btn")}</button>
     </form>
@@ -814,7 +817,8 @@ function focusConditionSection(sectionId) {
 function route() {
   const hash = location.hash.replace(/^#/, "") || "/";
   const [, page, param, param2] = hash.split("/");
-  window.scrollTo(0, 0);
+  /* CSS scroll-behavior:smooth의 영향을 받지 않도록 즉시 이동 */
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   applyChrome();
 
   if (!page) { renderHome(); return setMeta(null, T("default_desc")); }
@@ -879,6 +883,15 @@ function updateSymptomResult(listEl) {
 }
 
 /* ---------- 이벤트 위임 ---------- */
+app.addEventListener("submit", (e) => {
+  const form = e.target.closest(".search-box");
+  if (!form) return;
+  e.preventDefault();
+  const q = (form.q.value || "").trim();
+  if (!q) { form.q.focus(); return; } /* 빈 검색어는 이동하지 않음 */
+  location.hash = "#/search/" + encodeURIComponent(q);
+});
+
 app.addEventListener("click", (e) => {
   const sectionLink = e.target.closest("[data-section]");
   if (sectionLink && app.contains(sectionLink)) {
@@ -932,6 +945,7 @@ document.addEventListener("click", (e) => {
 const topBtn = document.createElement("button");
 topBtn.className = "back-top";
 topBtn.textContent = "↑";
+topBtn.setAttribute("aria-label", T("back_top"));
 topBtn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
 document.body.appendChild(topBtn);
 window.addEventListener("scroll", () => {
