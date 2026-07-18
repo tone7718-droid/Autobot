@@ -1,6 +1,6 @@
 /* 서비스 워커 — 오프라인 지원 (앱 셸 + 질환 데이터 캐시)
    콘텐츠를 바꾸면 CACHE 버전을 올려 갱신을 강제한다. */
-const CACHE = "mtm-v6";
+const CACHE = "mtm-v7";
 
 const APP_SHELL = [
   "./",
@@ -26,6 +26,8 @@ const APP_SHELL = [
   "./manifest.webmanifest",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
+  "./assets/maskable-512.png",
+  "./assets/og-image.png",
   "./assets/illustrations/hero-pain-guide.webp",
   "./assets/illustrations/neck.webp",
   "./assets/illustrations/shoulder.webp",

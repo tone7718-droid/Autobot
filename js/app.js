@@ -221,6 +221,13 @@ function view(c) {
   return c;
 }
 
+/* 영문 모드에서 제목과 사실상 같은 영문 부제는 중복 표기를 피한다 */
+function engSub(c, name) {
+  if (LANG !== "en") return c.eng;
+  const norm = (s) => String(s).toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  return norm(name) === norm(c.eng) ? "" : c.eng;
+}
+
 const app = document.getElementById("app");
 
 /* ---------- 유틸 ---------- */
@@ -465,7 +472,7 @@ function itemHTML(c) {
   return `
     <a class="condition-item" href="#/condition/${c.id}">
       <div>
-        <h3>${v.name}<span class="eng">${c.eng}</span></h3>
+        <h3>${v.name}${engSub(c, v.name) ? `<span class="eng">${engSub(c, v.name)}</span>` : ""}</h3>
         <p>${v.summary}</p>
       </div>
       <span class="arrow">›</span>
@@ -515,7 +522,7 @@ function renderCondition(id) {
     <header class="condition-header">
       <span class="cat-label">${cat.icon} ${catName(cat)}</span>
       <h1>${v.name}</h1>
-      <p class="eng-name">${c.eng}</p>
+      ${engSub(c, v.name) ? `<p class="eng-name">${engSub(c, v.name)}</p>` : ""}
       <p class="summary">${v.summary}</p>
     </header>
 
@@ -591,7 +598,9 @@ function renderCondition(id) {
 
 /* ---------- 페이지: 검색 ---------- */
 function renderSearch(query) {
-  const q = decodeURIComponent(query || "").trim();
+  let q = "";
+  try { q = decodeURIComponent(query || ""); } catch (e) { q = ""; }
+  q = q.trim();
   const terms = q.split(/\s+/).filter(Boolean);
   let results = [];
   if (terms.length) {
@@ -629,7 +638,7 @@ const GUIDE_HTML = {
       <ul>
         <li><strong>어떤 질환인가요?</strong> — 질환의 정체와 생기는 이유를 비유로 쉽게 설명합니다.</li>
         <li><strong>증상 체크</strong> — 내 증상과 비교해 볼 수 있는 체크리스트입니다.</li>
-        <li><strong>자가 평가</strong> — 병원에서 쓰는 검사를 집에서 안전하게 해볼 수 있도록 바꾼 것입니다.</li>
+        <li><strong>자가 관찰</strong> — 병원에서 쓰는 검사를 집에서 안전하게 살펴볼 수 있도록 바꾼 것입니다.</li>
         <li><strong>수동 치료</strong> — 도수치료, 물리치료처럼 <em>전문가가 나에게 해주는</em> 치료입니다.</li>
         <li><strong>능동 치료</strong> — <em>내가 직접 하는</em> 운동입니다. 재발을 막는 진짜 치료의 핵심입니다.</li>
         <li><strong>병원에 가야 할 때</strong> — 자가 관리로 버티면 안 되는 위험 신호(red flag)입니다.</li>
@@ -655,7 +664,7 @@ const GUIDE_HTML = {
       <ul>
         <li><strong>What is it?</strong> — Explains what the condition is and why it happens, using simple analogies.</li>
         <li><strong>Symptoms</strong> — A checklist to compare against your own symptoms.</li>
-        <li><strong>Self-tests</strong> — Clinic exams adapted so you can try them safely at home.</li>
+        <li><strong>Self-observations</strong> — Clinic exams adapted so you can try them safely at home.</li>
         <li><strong>Hands-on care</strong> — Treatments a <em>professional provides to you</em>, like manual and physical therapy.</li>
         <li><strong>Active care</strong> — Exercises <em>you do yourself</em> — the real key to preventing recurrence.</li>
         <li><strong>When to see a doctor</strong> — Red flags where you should stop self-care.</li>
@@ -697,7 +706,8 @@ function renderComparePicker(preId) {
     conditionsIn(cat.id).map((c) => {
       const v = view(c);
       const sel = c.id === selectedId ? " selected" : "";
-      return `<option value="${c.id}"${sel}>${esc(v.name)} (${esc(c.eng)})</option>`;
+      const sub = engSub(c, v.name);
+      return `<option value="${c.id}"${sel}>${esc(v.name)}${sub ? ` (${esc(sub)})` : ""}</option>`;
     }).join("") +
     "</optgroup>"
   ).join("");
@@ -771,13 +781,13 @@ function renderComparison(id1, id2) {
       <div class="cmp-header-grid">
         <div class="cmp-head-card cmp-a">
           <span class="cmp-badge cmp-a">A</span>
-          <h2>${esc(v1.name)}<span class="eng">${esc(c1.eng)}</span></h2>
+          <h2>${esc(v1.name)}${engSub(c1, v1.name) ? `<span class="eng">${esc(engSub(c1, v1.name))}</span>` : ""}</h2>
           <p class="cmp-summary">${esc(v1.summary)}</p>
           <a href="#/condition/${esc(id1)}" class="cmp-detail-link">→ ${T("sec_what")}</a>
         </div>
         <div class="cmp-head-card cmp-b">
           <span class="cmp-badge cmp-b">B</span>
-          <h2>${esc(v2.name)}<span class="eng">${esc(c2.eng)}</span></h2>
+          <h2>${esc(v2.name)}${engSub(c2, v2.name) ? `<span class="eng">${esc(engSub(c2, v2.name))}</span>` : ""}</h2>
           <p class="cmp-summary">${esc(v2.summary)}</p>
           <a href="#/condition/${esc(id2)}" class="cmp-detail-link">→ ${T("sec_what")}</a>
         </div>
@@ -883,8 +893,13 @@ app.addEventListener("click", (e) => {
     e.preventDefault();
     const sectionId = sectionLink.getAttribute("data-section");
     const nextHash = sectionLink.getAttribute("href");
-    if (location.hash === nextHash) focusConditionSection(sectionId);
-    else location.hash = nextHash;
+    if (document.getElementById(sectionId)) {
+      // 같은 상세 페이지 안의 섹션 이동: 재렌더 없이 스크롤해 체크리스트 상태를 보존한다
+      if (location.hash !== nextHash) history.replaceState(null, "", nextHash);
+      focusConditionSection(sectionId);
+    } else {
+      location.hash = nextHash;
+    }
     return;
   }
 
