@@ -125,6 +125,9 @@ main { min-height: 70vh; padding: 32px 20px 64px; }
   overflow: hidden;
 }
 
+/* 그리드 칼럼이 내용(검색창 input의 내재 폭)보다 넓어지지 않게 —
+   좁은 화면에서 overflow:hidden 카드에 텍스트 오른쪽이 잘리던 버그 방지 */
+.hero-with-visual > * { min-width: 0; }
 .hero-with-visual .hero-copy > p { margin-left: 0; margin-right: 0; }
 .hero-with-visual .search-box { margin-left: 0; margin-right: 0; }
 .hero-with-visual .search-hint { text-align: left; margin-bottom: 0; }
@@ -152,6 +155,7 @@ main { min-height: 70vh; padding: 32px 20px 64px; }
 
 .search-box input {
   flex: 1;
+  min-width: 0; /* 내재 폭 때문에 좁은 화면에서 컨테이너를 밀어내지 않도록 */
   border: none;
   outline: none;
   padding: 13px 22px;
