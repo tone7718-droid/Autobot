@@ -933,3 +933,44 @@ mark { background: #ffe066; border-radius: 3px; padding: 0 2px; }
   }
   a { color: #000 !important; text-decoration: none !important; }
 }
+
+/* ---------- 스크린리더 전용 (언어 전환 알림 등) ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* ---------- 글자 크기 버튼 활성 표시 ---------- */
+.lang-toggle.is-active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* ---------- 홈 화면 질환 비교 배너 ---------- */
+.compare-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 26px 0 6px;
+  padding: 16px 20px;
+  border: 1.5px solid var(--primary-light);
+  border-radius: 14px;
+  background: var(--primary-light);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.compare-banner:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.compare-banner .cb-icon { font-size: 1.6rem; }
+.compare-banner .cb-copy { display: flex; flex-direction: column; gap: 2px; }
+.compare-banner .cb-copy strong { color: var(--primary); }
+.compare-banner .cb-copy span { font-size: 0.9rem; color: var(--text-light); }
+.compare-banner .arrow { margin-left: auto; color: var(--primary); font-size: 1.4rem; }

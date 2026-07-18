@@ -1,6 +1,7 @@
 /* 서비스 워커 — 오프라인 지원 (앱 셸 + 질환 데이터 캐시)
-   콘텐츠를 바꾸면 CACHE 버전을 올려 갱신을 강제한다. */
-const CACHE = "mtm-v7";
+   앱 셸은 stale-while-revalidate: 캐시로 즉시 응답하고 백그라운드에서 갱신하므로
+   버전 bump를 잊어도 다음 방문에는 새 콘텐츠가 반영된다. */
+const CACHE = "mtm-v8";
 
 const APP_SHELL = [
   "./",
@@ -58,26 +59,51 @@ self.addEventListener("fetch", (e) => {
 
   const url = new URL(req.url);
 
-  // SPA 내비게이션: 항상 캐시된 index.html 로 응답(오프라인에서도 앱이 뜨도록)
+  // 내비게이션: SPA 루트만 앱 셸로 응답. /condition/… 등 정적 페이지는
+  // 네트워크 우선으로 그대로 서빙 (오프라인이면 캐시 → 앱 셸 순 폴백)
   if (req.mode === "navigate") {
-    e.respondWith(
-      caches.match("./index.html").then((cached) => cached || fetch(req))
-    );
+    const isShell = url.pathname === "/" || url.pathname === "/index.html";
+    if (isShell) {
+      e.respondWith(
+        caches.match("./index.html").then((cached) => {
+          const fetched = fetch("./index.html").then((res) => {
+            if (res && res.status === 200) {
+              const copy = res.clone();
+              caches.open(CACHE).then((c) => c.put("./index.html", copy));
+            }
+            return res;
+          }).catch(() => cached);
+          return cached || fetched;
+        })
+      );
+    } else {
+      e.respondWith(
+        fetch(req).then((res) => {
+          if (res && res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy));
+          }
+          return res;
+        }).catch(() =>
+          caches.match(req).then((cached) => cached || caches.match("./index.html"))
+        )
+      );
+    }
     return;
   }
 
-  // 동일 출처 자원: 캐시 우선, 없으면 네트워크 후 캐시에 저장
+  // 동일 출처 자원: stale-while-revalidate — 캐시 즉시 응답, 뒤에서 새 버전 저장
   if (url.origin === self.location.origin) {
     e.respondWith(
       caches.match(req).then((cached) => {
-        if (cached) return cached;
-        return fetch(req).then((res) => {
+        const fetched = fetch(req).then((res) => {
           if (res && res.status === 200 && res.type === "basic") {
             const copy = res.clone();
             caches.open(CACHE).then((c) => c.put(req, copy));
           }
           return res;
         }).catch(() => cached);
+        return cached || fetched;
       })
     );
     return;

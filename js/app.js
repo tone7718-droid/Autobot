@@ -294,7 +294,7 @@ function ensureMeta(selector, attr, val) {
 
 /* ---------- 로컬 저장소 (즐겨찾기 · 최근 본 질환) ---------- */
 const Store = {
-  KEY_FAV: "mtm_favorites", KEY_RECENT: "mtm_recent", MAX_RECENT: 6,
+  KEY_FAV: "mtm_favorites", KEY_RECENT: "mtm_recent", KEY_SYM: "mtm_symptoms", MAX_RECENT: 6,
   _read(key) {
     try { const v = JSON.parse(localStorage.getItem(key)); return Array.isArray(v) ? v : []; }
     catch (e) { return []; }
@@ -308,6 +308,20 @@ const Store = {
     if (i === -1) favs.unshift(id); else favs.splice(i, 1);
     this._write(this.KEY_FAV, favs);
     return i === -1;
+  },
+  /* 증상 체크 상태: { 질환id: [체크한 인덱스…] } — 재방문에도 유지 */
+  _readMap(key) {
+    try { const v = JSON.parse(localStorage.getItem(key)); return v && typeof v === "object" && !Array.isArray(v) ? v : {}; }
+    catch (e) { return {}; }
+  },
+  symptoms(id) {
+    const m = this._readMap(this.KEY_SYM);
+    return Array.isArray(m[id]) ? m[id] : [];
+  },
+  setSymptoms(id, indexes) {
+    const m = this._readMap(this.KEY_SYM);
+    if (indexes.length) m[id] = indexes; else delete m[id];
+    try { localStorage.setItem(this.KEY_SYM, JSON.stringify(m)); } catch (e) {}
   },
   recents() { return this._read(this.KEY_RECENT).filter((id) => CONDITIONS.some((c) => c.id === id)); },
   pushRecent(id) {
@@ -429,6 +443,12 @@ function renderHome() {
     <h2 class="section-title">${T("how_title")}</h2>
     <div class="steps">${steps}</div>
 
+    <a class="compare-banner" href="#/compare">
+      <span class="cb-icon">⚖️</span>
+      <span class="cb-copy"><strong>${T("compare_page")}</strong><span>${T("compare_desc")}</span></span>
+      <span class="arrow">›</span>
+    </a>
+
     <h2 class="section-title">${T("all_title")}</h2>
     <p class="section-sub">${T("all_sub")}</p>
     <div class="condition-list">${CONDITIONS.slice(0, 6).map(itemHTML).join("")}</div>
@@ -467,13 +487,25 @@ function renderAll() {
   `;
 }
 
+/* 검색 결과에서 일치 단어를 표시할 때만 채워진다 */
+let HIGHLIGHT_TERMS = [];
+function markTerms(s) {
+  let out = s;
+  for (const t of HIGHLIGHT_TERMS) {
+    if (!t) continue;
+    const re = new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+    out = out.replace(re, (m) => `<mark>${m}</mark>`);
+  }
+  return out;
+}
+
 function itemHTML(c) {
   const v = view(c);
   return `
     <a class="condition-item" href="#/condition/${c.id}">
       <div>
-        <h3>${v.name}${engSub(c, v.name) ? `<span class="eng">${engSub(c, v.name)}</span>` : ""}</h3>
-        <p>${v.summary}</p>
+        <h3>${markTerms(v.name)}${engSub(c, v.name) ? `<span class="eng">${markTerms(engSub(c, v.name))}</span>` : ""}</h3>
+        <p>${markTerms(v.summary)}</p>
       </div>
       <span class="arrow">›</span>
     </a>`;
@@ -494,10 +526,14 @@ function renderCondition(id) {
 
   const descHTML = v.description.map((p) => `<p class="lead">${p}</p>`).join("");
   const causesHTML = v.causes.map((s) => `<li>${s}</li>`).join("");
-  const symptomsHTML = v.symptoms.map((s, i) => `
-    <li class="symptom-check" data-idx="${i}" role="button" tabindex="0" aria-pressed="false">
+  const savedSymptoms = new Set(Store.symptoms(c.id));
+  const symptomsHTML = v.symptoms.map((s, i) => {
+    const on = savedSymptoms.has(i);
+    return `
+    <li class="symptom-check${on ? " checked" : ""}" data-idx="${i}" role="button" tabindex="0" aria-pressed="${on}">
       <span class="sc-box" aria-hidden="true"></span><span class="sc-text">${s}</span>
-    </li>`).join("");
+    </li>`;
+  }).join("");
   const testsHTML = v.selfTests.map((t) => `
     <div class="test-card"><h4>🔍 ${t.name}</h4><p class="how">${t.how}</p><p class="positive"><strong class="test-result-label">${T("test_result_label")}</strong>${t.positive}</p></div>`).join("");
   const passiveHTML = v.passive.map((t) => `
@@ -549,7 +585,7 @@ function renderCondition(id) {
       <div class="condition-overview-grid">
         <div class="condition-overview-copy">
           ${descHTML}
-          <h2 style="font-size:1.05rem; margin-top:18px;">${T("sec_why")}</h2>
+          <h3 style="font-size:1.05rem; margin-top:18px;">${T("sec_why")}</h3>
           <ul class="check-list cause-list">${causesHTML}</ul>
         </div>
         ${categoryVisualHTML(cat, "detail-visual")}
@@ -559,7 +595,7 @@ function renderCondition(id) {
     <section class="content-section" id="sec-symptoms">
       <h2>${T("sec_symptoms")}</h2>
       <p class="lead">${T("symptoms_lead")}</p>
-      <ul class="check-list symptom-checklist" data-total="${v.symptoms.length}">${symptomsHTML}</ul>
+      <ul class="check-list symptom-checklist" data-total="${v.symptoms.length}" data-cond="${c.id}">${symptomsHTML}</ul>
       <div class="symptom-result" id="symptom-result" role="status" aria-live="polite" aria-atomic="true" hidden></div>
     </section>
 
@@ -594,6 +630,8 @@ function renderCondition(id) {
       ${next ? `<a class="next" href="#/condition/${next.id}"><span class="nav-label">${T("next_label")}</span>${view(next).name}</a>` : "<span style='flex:1'></span>"}
     </nav>
   `;
+  // 저장된 체크 상태의 집계를 바로 표시
+  updateSymptomResult(app.querySelector(".symptom-checklist"));
 }
 
 /* ---------- 페이지: 검색 ---------- */
@@ -623,7 +661,12 @@ function renderSearch(query) {
     </form>
     ${results.length
       ? `<p class="search-result-info">${T("search_found")(esc(q), results.length)}</p>
-         <div class="condition-list">${results.map(itemHTML).join("")}</div>`
+         <div class="condition-list">${(() => {
+           HIGHLIGHT_TERMS = terms;
+           const html = results.map(itemHTML).join("");
+           HIGHLIGHT_TERMS = [];
+           return html;
+         })()}</div>`
       : `<div class="empty-state"><div class="big">🤔</div><p>${T("search_empty")(esc(q))}</p></div>`}
   `;
 }
@@ -864,14 +907,50 @@ function toggleLang() {
   LANG = LANG === "ko" ? "en" : "ko";
   try { localStorage.setItem(LANG_KEY, LANG); } catch (e) {}
   route();
+  // 스크린리더에게 언어가 바뀌었음을 알린다
+  const live = document.getElementById("a11yStatus");
+  if (live) live.textContent = LANG === "en" ? "Language changed to English" : "언어가 한국어로 바뀌었습니다";
 }
+
+/* ---------- 글자 크기 (100% → 112% → 125%) ---------- */
+const FONT_KEY = "mtm_fontsize";
+const FONT_STEPS = [100, 112, 125];
+function applyFontSize() {
+  let pct = 100;
+  try { pct = Number(localStorage.getItem(FONT_KEY)) || 100; } catch (e) {}
+  if (!FONT_STEPS.includes(pct)) pct = 100;
+  document.documentElement.style.fontSize = pct === 100 ? "" : pct + "%";
+  const btn = document.getElementById("fontToggle");
+  if (btn) {
+    btn.setAttribute("aria-label", (LANG === "en" ? "Text size: " : "글자 크기: ") + pct + "%");
+    btn.classList.toggle("is-active", pct !== 100);
+  }
+  return pct;
+}
+function cycleFontSize() {
+  const cur = applyFontSize();
+  const next = FONT_STEPS[(FONT_STEPS.indexOf(cur) + 1) % FONT_STEPS.length];
+  try { localStorage.setItem(FONT_KEY, String(next)); } catch (e) {}
+  applyFontSize();
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#fontToggle")) { e.preventDefault(); cycleFontSize(); }
+});
+applyFontSize();
 
 /* ---------- 증상 체크리스트 ---------- */
 function toggleSymptom(li) {
   const checked = li.getAttribute("aria-pressed") === "true";
   li.setAttribute("aria-pressed", checked ? "false" : "true");
   li.classList.toggle("checked", !checked);
-  updateSymptomResult(li.closest(".symptom-checklist"));
+  const listEl = li.closest(".symptom-checklist");
+  updateSymptomResult(listEl);
+  // 체크 상태를 질환별로 저장해 재방문에도 유지
+  if (listEl && listEl.dataset.cond) {
+    const idx = [...listEl.querySelectorAll('.symptom-check[aria-pressed="true"]')]
+      .map((el) => Number(el.dataset.idx));
+    Store.setSymptoms(listEl.dataset.cond, idx);
+  }
 }
 function updateSymptomResult(listEl) {
   if (!listEl) return;
@@ -949,7 +1028,7 @@ topBtn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
 document.body.appendChild(topBtn);
 window.addEventListener("scroll", () => {
   topBtn.classList.toggle("show", window.scrollY > 600);
-});
+}, { passive: true });
 
 /* ---------- 서비스 워커 ---------- */
 if ("serviceWorker" in navigator) {

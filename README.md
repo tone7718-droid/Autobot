@@ -20,7 +20,9 @@
 ### 주요 기능
 
 - 🧍 **통증 부위 그림(body map)** — 인체 그림에서 아픈 부위를 눌러 바로 탐색
-- ✅ **인터랙티브 증상 체크** — 항목을 체크하면 실시간 집계 (체크 개수만으로 질환을 판정하지 않음)
+- ✅ **인터랙티브 증상 체크** — 항목을 체크하면 실시간 집계 (체크 개수만으로 질환을 판정하지 않음), 질환별 체크 상태가 저장되어 재방문에도 유지
+- 🔠 **글자 크기 조절** — 헤더의 가A 버튼으로 3단계(100·112·125%) 조절, 선택 저장
+- 🔎 **검색어 하이라이트** — 검색 결과에서 일치한 단어를 표시
 - ⚖️ **질환 비교(vs 보기)** — 헷갈리는 두 질환(예: 테니스 엘보 vs 골프 엘보)을 나란히 놓고 증상·자가 관찰·치료·위험 신호를 한눈에 비교
 - ⭐ **즐겨찾기 / 🕒 최근 본 질환** — localStorage에 저장되어 홈에서 이어 보기
 - 🖨 **인쇄 / PDF 핸드아웃** — 치료사가 환자에게 1장으로 출력해 줄 수 있는 인쇄 스타일
@@ -51,8 +53,22 @@ js/app.js              # 해시 라우터 + 렌더러 + 검색 + body map + 저�
 js/data/*.js           # 카테고리별 질환 콘텐츠 (한국어, 40개 질환)
 js/data/en/*.js        # 영어 콘텐츠 (CONTENT_EN, 40개 질환)
 manifest.webmanifest   # PWA 매니페스트
-sw.js                  # 서비스 워커 (오프라인 캐시)
+sw.js                  # 서비스 워커 (stale-while-revalidate 오프라인 캐시)
 assets/                # OG·앱 아이콘 + 순수 Node 생성 스크립트
+scripts/prerender.mjs  # 질환별 정적 페이지 + sitemap 생성기 (SEO)
+condition/, en/condition/  # 생성된 질환별 정적 페이지 (검색엔진·SNS 공유용)
+sitemap.xml, robots.txt    # 생성된 SEO 파일
+```
+
+### SEO 정적 페이지
+
+해시 라우팅 SPA는 검색엔진에 한 페이지로만 보이므로, 질환별 정적 페이지를
+미리 생성해 함께 배포합니다 (`/condition/<id>/`, `/en/condition/<id>/` +
+canonical·hreflang·OG 태그·sitemap). **콘텐츠(js/data)를 수정하면 반드시
+다시 생성해 커밋하세요:**
+
+```bash
+node scripts/prerender.mjs          # 배포 도메인이 다르면: SITE_URL=https://내도메인 node scripts/prerender.mjs
 ```
 
 - 해시 라우팅: `#/category/neck`, `#/condition/tennis-elbow`, `#/compare/tennis-elbow/golfers-elbow`, `#/search/검색어`
