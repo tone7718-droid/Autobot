@@ -36,6 +36,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <script>
+    // 구버전 서비스워커 캐시로 그려진 화면에서 새 SW가 제어권을 넘겨받으면
+    // 한 번만 새로고침해 최신 콘텐츠를 바로 보여준다.
+    // (최초 설치 시에는 기존 컨트롤러가 없으므로 리로드하지 않는다)
+    if ("serviceWorker" in navigator) {
+      (function () {
+        var hadController = !!navigator.serviceWorker.controller;
+        var reloaded = false;
+        navigator.serviceWorker.addEventListener("controllerchange", function () {
+          if (!hadController || reloaded) return;
+          reloaded = true;
+          // controllerchange 콜백 안의 동기 reload는 무시될 수 있어 지연 실행한다
+          setTimeout(function () { location.reload(); }, 50);
+        });
+      })();
+    }
+  </script>
 </head>
 <body>
   <header class="site-header">

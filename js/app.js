@@ -1030,7 +1030,9 @@ window.addEventListener("scroll", () => {
   topBtn.classList.toggle("show", window.scrollY > 600);
 }, { passive: true });
 
-/* ---------- 서비스 워커 ---------- */
+/* ---------- 서비스 워커 ----------
+   업데이트 시 1회 자동 새로고침 리스너는 경합을 피하기 위해
+   index.html <head> 인라인 스크립트에서 가장 먼저 등록한다. */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js").catch(() => {});
