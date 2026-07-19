@@ -345,6 +345,8 @@ function applyChrome() {
   if (disc) disc.textContent = T("foot_disclaimer");
   const cp = document.getElementById("footCopyright");
   if (cp) cp.textContent = T("foot_copyright");
+  // 글자 크기 버튼의 aria-label도 현재 언어로 갱신
+  applyFontSize();
 }
 
 /* ---------- 통증 부위 그림 ---------- */
@@ -443,7 +445,7 @@ function renderHome() {
     <h2 class="section-title">${T("how_title")}</h2>
     <div class="steps">${steps}</div>
 
-    <a class="compare-banner" href="#/compare">
+    <a class="compare-banner no-print" href="#/compare">
       <span class="cb-icon">⚖️</span>
       <span class="cb-copy"><strong>${T("compare_page")}</strong><span>${T("compare_desc")}</span></span>
       <span class="arrow">›</span>
